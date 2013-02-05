@@ -6,11 +6,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.bma.asb.service.IdeaService;
+import org.hamcrest.CoreMatchers;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -83,7 +86,9 @@ public class AsbClientTest {
 		client.invoke(IdeaService.class.getDeclaredMethod("createNewIdea", String.class), "foo");
 	
 		// then
-		Mockito.verify(service).sendQueueMessage(Matchers.eq("aQueue"), Matchers.isA(BrokeredMessage.class));
+		ArgumentCaptor<BrokeredMessage> msgCap = ArgumentCaptor.forClass(BrokeredMessage.class);
+		Mockito.verify(service).sendQueueMessage(Matchers.eq("aQueue"), msgCap.capture());
+		Assert.assertThat(msgCap.getValue().getSessionId(), CoreMatchers.notNullValue());
 	}
 	
 	private void givenWeHaveListOfQueues(String queueName) throws ServiceException {
