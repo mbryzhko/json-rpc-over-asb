@@ -1,7 +1,13 @@
 package org.bma.asb.support;
 
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -88,7 +94,23 @@ public class AsbClientTest {
 		// then
 		ArgumentCaptor<BrokeredMessage> msgCap = ArgumentCaptor.forClass(BrokeredMessage.class);
 		Mockito.verify(service).sendQueueMessage(Matchers.eq("aQueue"), msgCap.capture());
-		Assert.assertThat(msgCap.getValue().getSessionId(), CoreMatchers.notNullValue());
+		assertThat(msgCap.getValue().getSessionId(), CoreMatchers.notNullValue());
+	}
+	
+	@Test
+	public void verifyThatMessageIsSentHasJsonRpcRequest() throws ServiceException, SecurityException, NoSuchMethodException, IOException {
+		givenWeHaveListOfQueues("aQueue");
+		
+		// when
+		client.invoke(IdeaService.class.getDeclaredMethod("createNewIdea", String.class), "foo");
+	
+		// then
+		ArgumentCaptor<BrokeredMessage> msgCap = ArgumentCaptor.forClass(BrokeredMessage.class);
+		Mockito.verify(service).sendQueueMessage(Matchers.eq("aQueue"), msgCap.capture());
+		InputStream is = msgCap.getValue().getBody();
+		BufferedReader br = new BufferedReader(new InputStreamReader(is));
+		String jsonRpcRequest = br.readLine();
+		assertThat(jsonRpcRequest, CoreMatchers.containsString("\"method\":\"createNewIdea\",\"params\":{\"name\":\"foo\"}"));
 	}
 	
 	private void givenWeHaveListOfQueues(String queueName) throws ServiceException {
