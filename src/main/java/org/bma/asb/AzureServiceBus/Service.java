@@ -1,5 +1,10 @@
 package org.bma.asb.AzureServiceBus;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
 import com.microsoft.windowsazure.services.core.Configuration;
 import com.microsoft.windowsazure.services.core.ServiceException;
 import com.microsoft.windowsazure.services.serviceBus.ServiceBusConfiguration;
@@ -35,7 +40,7 @@ public class Service {
 		     {
 		        try 
 		        {
-		           System.out.println("Body: " + message.getBody());
+		           System.out.println("Body: " + readMessageBody(message));
 		           System.out.println("MessageID: " + message.getMessageId());
 		           System.out.println("Custom Property: " + 
 		                message.getProperty("prop"));
@@ -59,5 +64,12 @@ public class Service {
 		        // Could instead wait for more messages to be added.
 		     }
 		}
+	}
+	
+	public static String readMessageBody(BrokeredMessage msg) throws IOException {
+		InputStream is = msg.getBody();
+		BufferedReader br = new BufferedReader(new InputStreamReader(is));
+		String messageBody = br.readLine();
+		return messageBody;
 	}
 }

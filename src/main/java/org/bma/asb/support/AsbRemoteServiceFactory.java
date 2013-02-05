@@ -10,8 +10,7 @@ import org.springframework.beans.factory.annotation.Required;
 public class AsbRemoteServiceFactory<T> implements FactoryBean<T> {
 
 	private Class<T> serviceClass;
-	private AsbServiceManager asbServiceManager;
-	 
+	private AsbClient client;
 
 	public T getObject() throws Exception {
 		return serviceClass.cast(Proxy.newProxyInstance(
@@ -20,7 +19,7 @@ public class AsbRemoteServiceFactory<T> implements FactoryBean<T> {
 					public Object invoke(Object proxy, Method method,
 							Object[] args) throws Throwable {
 						
-						return null;
+						return client.invoke(method, args);
 					}
 				}));
 	}
@@ -37,5 +36,11 @@ public class AsbRemoteServiceFactory<T> implements FactoryBean<T> {
 	public void setServiceClass(Class<T> serviceClass) {
 		this.serviceClass = serviceClass;
 	}
+
+	public void setClient(AsbClient client) {
+		this.client = client;
+	}
+	
+	
 
 }

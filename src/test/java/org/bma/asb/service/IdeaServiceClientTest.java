@@ -17,4 +17,11 @@ public class IdeaServiceClientTest {
 	public void verifyThatIntialised() {
 		Assert.assertNotNull(ideaService);
 	}
+	
+	@Test
+	public void verifyRequestIsSent() {
+		ideaService.createNewIdea("foo");
+		ideaService.createNewIdea("bar");
+		ideaService.createNewIdea("baz");
+	}
 }

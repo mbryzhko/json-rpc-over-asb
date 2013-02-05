@@ -13,7 +13,7 @@ public class AsbClient {
 	private final static Logger LOG = LoggerFactory.getLogger(AsbClient.class);
 	
 	private AsbQueue queue;
-	private AsbJsonRpcClient jsonRpc;
+	private AsbJsonRpcClient absJsonRpc;
 	
 	public Object invoke(Method method, Object... args) {
 		UUID sessionId = UUID.randomUUID();
@@ -22,7 +22,7 @@ public class AsbClient {
 		queue.assertQueueExists();
 		
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		jsonRpc.serialiseRequest(outputStream, method, args);
+		absJsonRpc.serialiseRequest(outputStream, method, args);
 		byte[] jsonRpcRequest = outputStream.toByteArray();
 		
 		BrokeredMessage jsonRpcMessage = new BrokeredMessage(jsonRpcRequest);
@@ -30,7 +30,7 @@ public class AsbClient {
 		
 		LOG.debug("Sending message to service in session: {}", sessionId);
 		queue.sendRequest(jsonRpcMessage);
-		return null;
+		return 0;
 	}
 
 	public AsbQueue getQueue() {
@@ -41,11 +41,11 @@ public class AsbClient {
 		this.queue = queue;
 	}
 
-	public AsbJsonRpcClient getJsonRpc() {
-		return jsonRpc;
+	public AsbJsonRpcClient getAbsJsonRpc() {
+		return absJsonRpc;
 	}
 
-	public void setJsonRpc(AsbJsonRpcClient jsonRpc) {
-		this.jsonRpc = jsonRpc;
+	public void setAsbJsonRpc(AsbJsonRpcClient jsonRpc) {
+		this.absJsonRpc = jsonRpc;
 	}
 }

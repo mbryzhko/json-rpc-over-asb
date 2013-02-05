@@ -57,7 +57,7 @@ public class AsbClientTest {
 	private void givenWeHaveAClient() {
 		client = new AsbClient();
 		client.setQueue(queue);
-		client.setJsonRpc(rpcClient);
+		client.setAsbJsonRpc(rpcClient);
 	}
 	
 	@Rule

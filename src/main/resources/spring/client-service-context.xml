@@ -4,7 +4,28 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 	<bean id="ideaService" class="org.bma.asb.support.AsbRemoteServiceFactory">
-		<property name="serviceClass" value="org.bma.asb.service.IdeaService"/>
+		<property name="serviceClass" value="org.bma.asb.service.IdeaService" />
+		<property name="client" ref="ideaServiceQueueClient" />
+	</bean>
+
+	<bean id="ideaServiceQueueClient" class="org.bma.asb.support.AsbClient">
+		<property name="asbJsonRpc" ref="jsonRpc" />
+		<property name="queue" ref="ideaServiceQueue" />
 	</bean>
 	
+	<bean id="ideaServiceQueue" class="org.bma.asb.support.AsbQueue">
+		<constructor-arg index="0" value="ideaservicequeue"/>
+		<constructor-arg index="1" ref="makeThingsServiceManager"/>
+	</bean>
+	
+	<bean id="makeThingsServiceManager" class="org.bma.asb.support.AsbServiceManager">
+		<property name="issuer" value="owner" />
+		<property name="key" value="/YO6Q9o94KLmjp4Ce0jDwWsDnZ4Hfk7UOVnh1pP1KMc=" />
+		<property name="namespace" value="makethingsbma" />
+		<property name="serviceBusRootUri" value=".servicebus.windows.net/" />
+		<property name="wrapRootUri" value="-sb.accesscontrol.windows.net/WRAPv0.9" />
+	</bean>
+	
+	<bean id="jsonRpc" class="org.bma.asb.support.DefaultAsbJsonRpcClient"></bean>
+
 </beans>
