@@ -3,5 +3,11 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-
+	<bean id="makeThingsServiceManager" class="org.bma.asb.support.AsbServiceManager">
+		<property name="issuer" value="owner" />
+		<property name="key" value="/YO6Q9o94KLmjp4Ce0jDwWsDnZ4Hfk7UOVnh1pP1KMc=" />
+		<property name="namespace" value="makethingsbma" />
+		<property name="serviceBusRootUri" value=".servicebus.windows.net/" />
+		<property name="wrapRootUri" value="-sb.accesscontrol.windows.net/WRAPv0.9" />
+	</bean>
 </beans>

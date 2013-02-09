@@ -19,7 +19,7 @@ public class AsbClient {
 		UUID sessionId = UUID.randomUUID();
 		LOG.debug("Preparing request for method: {} within session: {}", method.getName(), sessionId);
 		
-		queue.assertQueueExists();
+		queue.assertCreated();
 		
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		absJsonRpc.serialiseRequest(outputStream, method, args);

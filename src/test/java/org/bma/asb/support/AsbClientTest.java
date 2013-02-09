@@ -1,19 +1,13 @@
 package org.bma.asb.support;
 
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.when;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.Arrays;
 
-import org.bma.asb.service.IdeaService;
 import org.hamcrest.CoreMatchers;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -21,30 +15,20 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Matchers;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import com.microsoft.windowsazure.services.core.ServiceException;
-import com.microsoft.windowsazure.services.serviceBus.ServiceBusContract;
 import com.microsoft.windowsazure.services.serviceBus.models.BrokeredMessage;
-import com.microsoft.windowsazure.services.serviceBus.models.ListQueuesResult;
-import com.microsoft.windowsazure.services.serviceBus.models.QueueInfo;
 
 @RunWith(MockitoJUnitRunner.class)
-public class AsbClientTest {
+public class AsbClientTest extends AbstractAsbTest {
 	
 	private AsbClient client;
 	
 	private AsbQueue queue;
 	
 	private DefaultAsbJsonRpcClient rpcClient;
-	
-	@Mock
-	private AsbServiceManager serviceManager;
-	
-	@Mock
-	private ServiceBusContract service;
 	
 	@Before
 	public void before() {
@@ -70,7 +54,7 @@ public class AsbClientTest {
 		expectedException.expect(AsbException.class);
 		
 		// when
-		client.invoke(IdeaService.class.getDeclaredMethod("createNewIdea", String.class), "foo");
+		client.invoke(TestService.class.getDeclaredMethod("createNewIdea", String.class), "foo");
 	}
 	
 	@Test
@@ -78,7 +62,7 @@ public class AsbClientTest {
 		givenWeHaveListOfQueues("aQueue");
 		
 		// when
-		client.invoke(IdeaService.class.getDeclaredMethod("createNewIdea", String.class), "foo");
+		client.invoke(TestService.class.getDeclaredMethod("createNewIdea", String.class), "foo");
 	
 		// then
 		Mockito.verify(service).sendQueueMessage(Matchers.eq("aQueue"), Matchers.isA(BrokeredMessage.class));
@@ -89,7 +73,7 @@ public class AsbClientTest {
 		givenWeHaveListOfQueues("aQueue");
 		
 		// when
-		client.invoke(IdeaService.class.getDeclaredMethod("createNewIdea", String.class), "foo");
+		client.invoke(TestService.class.getDeclaredMethod("createNewIdea", String.class), "foo");
 	
 		// then
 		ArgumentCaptor<BrokeredMessage> msgCap = ArgumentCaptor.forClass(BrokeredMessage.class);
@@ -102,7 +86,7 @@ public class AsbClientTest {
 		givenWeHaveListOfQueues("aQueue");
 		
 		// when
-		client.invoke(IdeaService.class.getDeclaredMethod("createNewIdea", String.class), "foo");
+		client.invoke(TestService.class.getDeclaredMethod("createNewIdea", String.class), "foo");
 	
 		// then
 		ArgumentCaptor<BrokeredMessage> msgCap = ArgumentCaptor.forClass(BrokeredMessage.class);
@@ -110,21 +94,15 @@ public class AsbClientTest {
 		InputStream is = msgCap.getValue().getBody();
 		BufferedReader br = new BufferedReader(new InputStreamReader(is));
 		String jsonRpcRequest = br.readLine();
+		System.out.println(jsonRpcRequest);
 		assertThat(jsonRpcRequest, CoreMatchers.containsString("\"method\":\"createNewIdea\",\"params\":{\"name\":\"foo\"}"));
 	}
 	
-	private void givenWeHaveListOfQueues(String queueName) throws ServiceException {
-		QueueInfo qi = new QueueInfo(queueName);
-		ListQueuesResult listQueuesResult = new ListQueuesResult();
-		listQueuesResult.setItems(Arrays.asList(qi));
-		when(service.listQueues()).thenReturn(listQueuesResult);
-	}
+	
 
 	private void givenWeHaveAQueue() {
 		queue = new AsbQueue("aQueue", serviceManager);
 	}
 	
-	private void givenWeHaveAServiceManager() {
-		when(serviceManager.getService()).thenReturn(service);
-	}
+	
 }	

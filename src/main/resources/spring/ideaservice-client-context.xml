@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<import resource="classpath:spring/asb-service-context.xml" />
+
+	<bean id="ideaService" class="org.bma.asb.support.AsbRemoteServiceFactory">
+		<property name="serviceClass" value="org.bma.asb.service.IdeaService" />
+		<property name="client" ref="ideaServiceQueueClient" />
+	</bean>
+
+	<bean id="ideaServiceQueueClient" class="org.bma.asb.support.AsbClient">
+		<property name="asbJsonRpc" ref="jsonRpc" />
+		<property name="queue" ref="ideaServiceQueue" />
+	</bean>
+
+	<bean id="ideaServiceQueue" class="org.bma.asb.support.AsbQueue">
+		<constructor-arg index="0" value="ideaservicequeue" />
+		<constructor-arg index="1" ref="makeThingsServiceManager" />
+	</bean>
+
+	<bean id="jsonRpc" class="org.bma.asb.support.DefaultAsbJsonRpcClient"></bean>
+
+</beans>

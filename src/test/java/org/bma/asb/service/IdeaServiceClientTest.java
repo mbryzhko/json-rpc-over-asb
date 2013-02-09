@@ -8,7 +8,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:/spring/client-service-context.xml")
+@ContextConfiguration("classpath:/spring/ideaservice-client-context.xml")
 public class IdeaServiceClientTest {
 	@Autowired
 	private IdeaService ideaService;
@@ -20,8 +20,10 @@ public class IdeaServiceClientTest {
 	
 	@Test
 	public void verifyRequestIsSent() {
+		for (int i = 0; i < 10; i++) {
 		ideaService.createNewIdea("foo");
 		ideaService.createNewIdea("bar");
 		ideaService.createNewIdea("baz");
+		}
 	}
 }

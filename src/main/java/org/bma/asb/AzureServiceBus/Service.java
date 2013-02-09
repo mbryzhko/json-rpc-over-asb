@@ -58,8 +58,9 @@ public class Service {
 		     }
 		     else
 		     {
+		    	 
 		        System.out.println("Finishing up - no more messages.");
-		        break; 
+		        //break; 
 		        // Added to handle no more messages in the queue.
 		        // Could instead wait for more messages to be added.
 		     }
