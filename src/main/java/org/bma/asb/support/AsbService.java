@@ -37,11 +37,17 @@ public class AsbService {
 	}
 	
 	protected void startReceiving() {
-		BrokeredMessage message = queue.receiveMessage();
-		if (message != null) {
-			InputStream request = message.getBody();
+		BrokeredMessage request = queue.receiveMessage();
+		if (request != null) {
+			LOG.debug("Received requst message from queue: {} for session: {}", queue.getPath(), request.getSessionId());
+			InputStream requestIs = request.getBody();
 			ByteArrayOutputStream responceOs = new ByteArrayOutputStream();
-			requestHandler.handleRequest(request, responceOs);
+			requestHandler.handleRequest(requestIs, responceOs);
+			BrokeredMessage response = new BrokeredMessage(responceOs.toByteArray());
+			LOG.debug("Sending response to queue: {} for session: {}", queue.getPath(), response.getReplyToSessionId());
+			queue.sendRequest(response);
+		} else {
+			LOG.debug("Reveived empty message from queue: {}", queue.getPath());
 		}
 	}
 	public void stop() {

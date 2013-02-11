@@ -2,10 +2,7 @@ package org.bma.asb.support;
 
 import static org.junit.Assert.assertThat;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.Before;
@@ -91,14 +88,9 @@ public class AsbClientTest extends AbstractAsbTest {
 		// then
 		ArgumentCaptor<BrokeredMessage> msgCap = ArgumentCaptor.forClass(BrokeredMessage.class);
 		Mockito.verify(service).sendQueueMessage(Matchers.eq("aQueue"), msgCap.capture());
-		InputStream is = msgCap.getValue().getBody();
-		BufferedReader br = new BufferedReader(new InputStreamReader(is));
-		String jsonRpcRequest = br.readLine();
-		System.out.println(jsonRpcRequest);
-		assertThat(jsonRpcRequest, CoreMatchers.containsString("\"method\":\"createNewIdea\",\"params\":{\"name\":\"foo\"}"));
+		BrokeredMessage message = msgCap.getValue();
+		assertMessageBody(message, "\"method\":\"createNewIdea\",\"params\":{\"name\":\"foo\"}");
 	}
-	
-	
 
 	private void givenWeHaveAQueue() {
 		queue = new AsbQueue("aQueue", serviceManager);

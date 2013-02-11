@@ -1,20 +1,26 @@
 package org.bma.asb.support;
 
+import static org.hamcrest.CoreMatchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.math.MathContext;
 
+import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.internal.matchers.CapturesArguments;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import com.microsoft.windowsazure.services.core.ServiceException;
@@ -73,7 +79,28 @@ public class AsbServiceTest extends AbstractAsbTest {
 		whenStartService();
 		
 		thenCreateIdeaMethodIsInvoked();
+	}
+	
+	private void givenWeHaveResultOfServiceMethodInvoke() {
+		when(testService.createNewIdea(Matchers.anyString())).thenReturn(100);
+	}
 
+	@Test
+	public void verifyThatResultOfMethodInvokeIsSentInMessage() throws ServiceException, IOException {
+		givenWeHaveListOfQueues("aQueue");
+		givenWeHaveMessageInQueue();
+		givenWeHaveResultOfServiceMethodInvoke();
+		
+		whenStartService();
+		
+		thenResultIsSentInMessage();
+	}
+
+	private void thenResultIsSentInMessage() throws IOException, ServiceException {
+		ArgumentCaptor<BrokeredMessage> bmc = ArgumentCaptor.forClass(BrokeredMessage.class);
+		verify(service).sendQueueMessage(Matchers.eq("aQueue"), bmc.capture());
+		BrokeredMessage message = bmc.getValue();
+		assertMessageBody(message, "\"result\":100");
 	}
 
 	private void thenCreateIdeaMethodIsInvoked() {
@@ -82,7 +109,7 @@ public class AsbServiceTest extends AbstractAsbTest {
 
 	private void givenWeHaveMessageInQueue() throws ServiceException {
 		InputStream requstIs = AsbServiceTest.class
-				.getResourceAsStream("createIdeaRequest.txt");
+				.getResourceAsStream("/createIdeaRequest.txt");
 		BrokeredMessage message = new BrokeredMessage(requstIs);
 
 		ReceiveQueueMessageResult brMessage = new ReceiveQueueMessageResult(message);
