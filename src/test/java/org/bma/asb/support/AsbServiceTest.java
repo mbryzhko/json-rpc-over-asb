@@ -1,6 +1,5 @@
 package org.bma.asb.support;
 
-import static org.hamcrest.CoreMatchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.verify;
@@ -8,9 +7,6 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringReader;
-import java.math.MathContext;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
@@ -21,7 +17,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.internal.matchers.CapturesArguments;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import com.microsoft.windowsazure.services.core.ServiceException;
@@ -110,6 +105,7 @@ public class AsbServiceTest extends AbstractAsbTest {
 		BrokeredMessage message = bmc.getValue();
 		Assert.assertThat(message.getReplyToSessionId(), CoreMatchers.equalTo("200"));
 	}
+	
 
 	private void thenResultIsSentInMessage() throws IOException, ServiceException {
 		ArgumentCaptor<BrokeredMessage> bmc = ArgumentCaptor.forClass(BrokeredMessage.class);
@@ -146,6 +142,7 @@ public class AsbServiceTest extends AbstractAsbTest {
 		asbService = new AsbService();
 		asbService.setQueue(queue);
 		asbService.setRequestHandler(requestHandler);
+		asbService.setStopAfter(1);
 	}
 
 	public void verifyThatIfQueueDoesNotExistThenItIsCreated() {

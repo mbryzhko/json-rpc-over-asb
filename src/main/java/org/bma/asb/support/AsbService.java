@@ -14,6 +14,9 @@ public class AsbService {
 	
 	private JsonRpcRequestHandler requestHandler;
 	private AsbQueue queue;
+	private volatile boolean running = false;
+	/** Stop service after specified count of messages received. */
+	private volatile int stopAfter = -1;
 	
 	public JsonRpcRequestHandler getRequestHandler() {
 		return requestHandler;
@@ -29,15 +32,30 @@ public class AsbService {
 	}
 	
 	public void start() {
-		LOG.info("Starting Asb Service instance");
-		if (!queue.isCreated()) {
-			queue.create();
+		if (!running) {
+			LOG.info("Starting Asb Service: {} instance", queue.getPath());
+			if (!queue.isCreated()) {
+				queue.create();
+			}
+			running = true;
+			startReceiving();
 		}
-		startReceiving();
 	}
 	
 	protected void startReceiving() {
-		BrokeredMessage request = queue.receiveMessage();
+		while (running && stopAfter != 0) {
+			try {
+				BrokeredMessage request = queue.receiveMessage();
+				processRequest(request);
+			} catch (AsbException e) {
+				// TODO: introduce correct error handling
+				LOG.error("Error in service: {} loop", queue.getPath());
+			} finally {
+				decStopAfter();
+			}
+		}
+	}
+	private void processRequest(BrokeredMessage request) {
 		if (request != null) {
 			
 			LOG.debug("Received requst message from queue: {} for session: {}", queue.getPath(), request.getSessionId());
@@ -56,7 +74,23 @@ public class AsbService {
 			LOG.debug("Reveived empty message from queue: {}", queue.getPath());
 		}
 	}
+	
+	private void decStopAfter() {
+		if (stopAfter > 0) {
+			stopAfter--;
+		}
+	}
+	
 	public void stop() {
-		
+		LOG.info("Stop Asb service: ", queue.getPath());
+		running = false;
+	}
+	
+	public int getStopAfter() {
+		return stopAfter;
+	}
+	
+	public void setStopAfter(int stopAfter) {
+		this.stopAfter = stopAfter;
 	}
 }
