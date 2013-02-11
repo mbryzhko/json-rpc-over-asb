@@ -13,6 +13,7 @@ import java.io.StringReader;
 import java.math.MathContext;
 
 import org.hamcrest.CoreMatchers;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -95,6 +96,20 @@ public class AsbServiceTest extends AbstractAsbTest {
 		
 		thenResultIsSentInMessage();
 	}
+	
+	@Test
+	public void verifyThatReponceIsSentWithReplayToSessionId() throws ServiceException, IOException {
+		givenWeHaveListOfQueues("aQueue");
+		givenWeHaveMessageInQueue();
+		givenWeHaveResultOfServiceMethodInvoke();
+		
+		whenStartService();
+		
+		ArgumentCaptor<BrokeredMessage> bmc = ArgumentCaptor.forClass(BrokeredMessage.class);
+		verify(service).sendQueueMessage(Matchers.eq("aQueue"), bmc.capture());
+		BrokeredMessage message = bmc.getValue();
+		Assert.assertThat(message.getReplyToSessionId(), CoreMatchers.equalTo("200"));
+	}
 
 	private void thenResultIsSentInMessage() throws IOException, ServiceException {
 		ArgumentCaptor<BrokeredMessage> bmc = ArgumentCaptor.forClass(BrokeredMessage.class);
@@ -111,7 +126,8 @@ public class AsbServiceTest extends AbstractAsbTest {
 		InputStream requstIs = AsbServiceTest.class
 				.getResourceAsStream("/createIdeaRequest.txt");
 		BrokeredMessage message = new BrokeredMessage(requstIs);
-
+		message.setSessionId("200");
+		
 		ReceiveQueueMessageResult brMessage = new ReceiveQueueMessageResult(message);
 		when(service.receiveQueueMessage(eq("aQueue"),
 						isA(ReceiveMessageOptions.class)))
