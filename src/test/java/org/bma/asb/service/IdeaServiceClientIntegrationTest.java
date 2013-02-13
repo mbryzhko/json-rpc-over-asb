@@ -1,6 +1,7 @@
 package org.bma.asb.service;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ public class IdeaServiceClientIntegrationTest {
 	private IdeaService ideaService;
 
 	@Test
+	@Ignore
 	public void verifyThatIntialised() {
 		Assert.assertNotNull(ideaService);
 	}

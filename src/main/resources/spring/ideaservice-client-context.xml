@@ -15,11 +15,6 @@
 		<property name="queue" ref="ideaServiceQueue" />
 	</bean>
 
-	<bean id="ideaServiceQueue" class="org.bma.asb.support.AsbQueue">
-		<constructor-arg index="0" value="ideaservicequeue" />
-		<constructor-arg index="1" ref="makeThingsServiceManager" />
-	</bean>
-
 	<bean id="jsonRpc" class="org.bma.asb.support.DefaultAsbJsonRpcClient"></bean>
 
 </beans>

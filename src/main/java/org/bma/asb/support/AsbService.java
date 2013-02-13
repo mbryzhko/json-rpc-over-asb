@@ -56,7 +56,7 @@ public class AsbService {
 		}
 	}
 	private void processRequest(BrokeredMessage request) {
-		if (request != null) {
+		if (request != null && request.getMessageId() != null) {
 			
 			LOG.debug("Received requst message from queue: {} for session: {}", queue.getPath(), request.getSessionId());
 			InputStream requestIs = request.getBody();

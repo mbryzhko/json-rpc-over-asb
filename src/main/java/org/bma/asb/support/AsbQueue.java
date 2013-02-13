@@ -62,6 +62,7 @@ public class AsbQueue {
 			LOG.info("Creating new queue {}", getPath());
 			QueueInfo info = new QueueInfo(getPath());
 			info.setRequiresSession(true);
+			info.setRequiresDuplicateDetection(true);
 			serviceManager.getService().createQueue(info);
 		} catch (ServiceException e) {
 			throw new AsbException("Error creating new queue " + getPath(), e);

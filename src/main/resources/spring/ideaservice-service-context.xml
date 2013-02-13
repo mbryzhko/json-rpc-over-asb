@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<import resource="classpath:spring/asb-service-context.xml" />
+
+	<bean id="ideaServiceAsbService" class="org.bma.asb.support.AsbService">
+		<property name="queue" ref="ideaServiceQueue" />
+		<property name="requestHandler" ref="ideaServiceJsonRpcHandler" />
+	</bean>
+
+	<bean id="ideaServiceJsonRpcHandler" class="org.bma.asb.support.DefaultJsonRpcRequestHandler">
+		<property name="service" ref="ideaServiceTarget" />
+		<property name="serviceIntefaceClass" value="org.bma.asb.service.IdeaService" />
+	</bean>
+
+	<bean id="ideaServiceTarget" class="org.bma.asb.service.DefaultIdeaService" />
+
+</beans>

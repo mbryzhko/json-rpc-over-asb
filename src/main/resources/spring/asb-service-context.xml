@@ -1,13 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
 
+	<context:property-placeholder location="classpath:/asb.properties"/>
+	
 	<bean id="makeThingsServiceManager" class="org.bma.asb.support.AsbServiceManager">
-		<property name="issuer" value="owner" />
-		<property name="key" value="/YO6Q9o94KLmjp4Ce0jDwWsDnZ4Hfk7UOVnh1pP1KMc=" />
-		<property name="namespace" value="makethingsbma" />
-		<property name="serviceBusRootUri" value=".servicebus.windows.net/" />
-		<property name="wrapRootUri" value="-sb.accesscontrol.windows.net/WRAPv0.9" />
+		<property name="issuer" value="${idea.service.asb.issuer}" />
+		<property name="key" value="${idea.service.asb.key}" />
+		<property name="namespace" value="${idea.service.asb.namespace}" />
+		<property name="serviceBusRootUri" value="${idea.service.asb.serviceBusRootUri}" />
+		<property name="wrapRootUri" value="${idea.service.asb.wrapRootUri}" />
+	</bean>
+	
+	<bean id="ideaServiceQueue" class="org.bma.asb.support.AsbQueue">
+		<constructor-arg index="0" value="${idea.service.asb.path}" />
+		<constructor-arg index="1" ref="makeThingsServiceManager" />
 	</bean>
 </beans>
