@@ -16,10 +16,14 @@ public class AsbQueue {
 	
 	private String path;
 	private AsbServiceManager serviceManager;
+	private ReceiveMessageOptions receiveMessageOptions;
+
 
 	public AsbQueue(String path, AsbServiceManager serviceManager) {
 		this.path = path;
 		this.serviceManager = serviceManager;
+		receiveMessageOptions = new ReceiveMessageOptions();
+		receiveMessageOptions.setTimeout(10);
 	}
 
 	public String getPath() {
@@ -72,11 +76,11 @@ public class AsbQueue {
 	public BrokeredMessage receiveMessage() {
 		try {
 			 ReceiveQueueMessageResult message = serviceManager.getService()
-					.receiveQueueMessage(path, ReceiveMessageOptions.DEFAULT);
+					.receiveQueueMessage(path, receiveMessageOptions);
 			
 			LOG.debug("Recevied message {} from gueue {}", message, getPath());
 			
-			return message.getValue();
+			return message != null ? message.getValue() : null;
 		} catch (ServiceException e) {
 			throw new AsbException("Error receiving message from gueue "
 					+ getPath(), e);

@@ -1,6 +1,7 @@
 package org.bma.asb.support;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
 
@@ -24,6 +25,14 @@ public class DefaultAsbJsonRpcClient implements AsbJsonRpcClient {
 			jsonRpcClient.invoke(method.getName(), arguments, outputStream);
 		} catch (IOException e) {
 			throw new AsbException(e);
+		}
+	}
+
+	public Object deserialiseReponse(InputStream responseIs, Class<?> methodReturnType) throws AsbException {
+		try {
+			return jsonRpcClient.readResponse(methodReturnType, responseIs);
+		} catch (Throwable e) {
+			throw new AsbException("Error read reponse", e);
 		}
 	}
 

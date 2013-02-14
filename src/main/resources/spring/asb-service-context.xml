@@ -19,4 +19,8 @@
 		<constructor-arg index="0" value="${idea.service.asb.path}" />
 		<constructor-arg index="1" ref="makeThingsServiceManager" />
 	</bean>
+	<bean id="ideaServiceResponseQueue" class="org.bma.asb.support.AsbQueue">
+		<constructor-arg index="0" value="${idea.service.asb.reps.path}" />
+		<constructor-arg index="1" ref="makeThingsServiceManager" />
+	</bean>
 </beans>

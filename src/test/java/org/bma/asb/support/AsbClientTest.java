@@ -1,8 +1,12 @@
 package org.bma.asb.support;
 
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.isA;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.Before;
@@ -17,6 +21,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import com.microsoft.windowsazure.services.core.ServiceException;
 import com.microsoft.windowsazure.services.serviceBus.models.BrokeredMessage;
+import com.microsoft.windowsazure.services.serviceBus.models.ReceiveMessageOptions;
+import com.microsoft.windowsazure.services.serviceBus.models.ReceiveQueueMessageResult;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AsbClientTest extends AbstractAsbTest {
@@ -90,6 +96,30 @@ public class AsbClientTest extends AbstractAsbTest {
 		Mockito.verify(service).sendQueueMessage(Matchers.eq("aQueue"), msgCap.capture());
 		BrokeredMessage message = msgCap.getValue();
 		assertMessageBody(message, "\"method\":\"createNewIdea\",\"params\":{\"name\":\"foo\"}");
+	}
+	
+	@Test
+	public void verifyThatResponseMessageDeserialisedIntoResult() throws ServiceException, SecurityException, NoSuchMethodException {
+		givenWeHaveListOfQueues("aQueue");
+		givenWeHaveResponseMessageInAQueue();
+		
+		// when
+		Object result = client.invoke(TestService.class.getDeclaredMethod("createNewIdea", String.class), "foo");
+		
+		// then
+		assertThat(Integer.class.cast(result), CoreMatchers.is(100));
+	
+	}
+
+	private void givenWeHaveResponseMessageInAQueue() throws ServiceException {
+		InputStream requstIs = this.getClass().getResourceAsStream("/createIdeaResponse.txt");
+		BrokeredMessage message = new BrokeredMessage(requstIs);
+		message.setReplyToSessionId("200");
+		message.setMessageId("MsgId");
+
+		ReceiveQueueMessageResult brMessage = new ReceiveQueueMessageResult(message);
+		when(service.receiveQueueMessage(eq("aQueue"), isA(ReceiveMessageOptions.class)))
+				.thenReturn(brMessage);
 	}
 
 	private void givenWeHaveAQueue() {

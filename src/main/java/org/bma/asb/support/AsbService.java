@@ -2,6 +2,7 @@ package org.bma.asb.support;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +59,7 @@ public class AsbService {
 	private void processRequest(BrokeredMessage request) {
 		if (request != null && request.getMessageId() != null) {
 			
-			LOG.debug("Received requst message from queue: {} for session: {}", queue.getPath(), request.getSessionId());
+			LOG.debug("Received requst message: {} from queue: {} for session: {}", request.getMessageId(), queue.getPath(), request.getSessionId());
 			InputStream requestIs = request.getBody();
 			ByteArrayOutputStream responceOs = new ByteArrayOutputStream();
 			
@@ -71,7 +72,7 @@ public class AsbService {
 			queue.sendRequest(response);
 			
 		} else {
-			LOG.debug("Reveived empty message from queue: {}", queue.getPath());
+			LOG.trace("Reveived empty message from queue: {}", queue.getPath());
 		}
 	}
 	

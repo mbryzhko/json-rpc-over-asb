@@ -1,5 +1,6 @@
 package org.bma.asb.service;
 
+import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -22,10 +23,16 @@ public class IdeaServiceClientIntegrationTest {
 	
 	@Test
 	public void verifyRequestIsSent() {
-		for (int i = 0; i < 10; i++) {
-		ideaService.createNewIdea("foo");
-		ideaService.createNewIdea("bar");
-		ideaService.createNewIdea("baz");
+		for (int i = 0; i < 20; i++) {
+			int ideaId = ideaService.createNewIdea("idea-" + i);
+			Assert.assertThat(ideaId > 0, CoreMatchers.is(true));
 		}
+	}
+	
+	@Test
+	@Ignore
+	public void verifySingleRequest() {
+		int ideaId = ideaService.createNewIdea("foo");
+		Assert.assertThat(ideaId > 0, CoreMatchers.is(true));
 	}
 }

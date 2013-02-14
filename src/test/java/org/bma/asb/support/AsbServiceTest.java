@@ -111,6 +111,7 @@ public class AsbServiceTest extends AbstractAsbTest {
 		ArgumentCaptor<BrokeredMessage> bmc = ArgumentCaptor.forClass(BrokeredMessage.class);
 		verify(service).sendQueueMessage(Matchers.eq("aQueue"), bmc.capture());
 		BrokeredMessage message = bmc.getValue();
+		System.out.println(message);
 		assertMessageBody(message, "\"result\":100");
 	}
 
@@ -123,6 +124,7 @@ public class AsbServiceTest extends AbstractAsbTest {
 				.getResourceAsStream("/createIdeaRequest.txt");
 		BrokeredMessage message = new BrokeredMessage(requstIs);
 		message.setSessionId("200");
+		message.setMessageId("MsgId");
 		
 		ReceiveQueueMessageResult brMessage = new ReceiveQueueMessageResult(message);
 		when(service.receiveQueueMessage(eq("aQueue"),

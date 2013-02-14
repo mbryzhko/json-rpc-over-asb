@@ -40,7 +40,7 @@ public class Client {
 		System.out.println("Creating new queue " + Q_NAME);
 		service.createQueue(new QueueInfo(Q_NAME));
 
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < 10; i++) {
 			BrokeredMessage message = new BrokeredMessage("sendMessageWorks");
 			message.setProperty("prop", new Date().toString());
 			service.sendQueueMessage(Q_NAME, message);

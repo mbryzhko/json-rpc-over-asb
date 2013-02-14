@@ -1,6 +1,7 @@
 package org.bma.asb.support;
 
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.UUID;
 
@@ -28,9 +29,20 @@ public class AsbClient {
 		BrokeredMessage jsonRpcMessage = new BrokeredMessage(jsonRpcRequest);
 		jsonRpcMessage.setSessionId(sessionId.toString());
 		
-		LOG.debug("Sending message to service in session: {}", sessionId);
+		LOG.debug("Sending request to service in session: {}", sessionId);
 		queue.sendRequest(jsonRpcMessage);
-		return 0;
+		
+		BrokeredMessage message = queue.receiveMessage();
+		Object result = Integer.valueOf(0);
+		if (message != null && message.getMessageId() != null) {
+			LOG.debug("Processing reponse for session {}", sessionId);
+			InputStream responseIs = message.getBody();
+			Class<?> methodReturnType = method.getReturnType();
+			result = absJsonRpc.deserialiseReponse(responseIs, methodReturnType);
+		} else {
+			LOG.debug("Received empty reponse");
+		}
+		return result;
 	}
 
 	public AsbQueue getQueue() {
