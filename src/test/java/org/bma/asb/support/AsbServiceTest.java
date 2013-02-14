@@ -60,13 +60,6 @@ public class AsbServiceTest extends AbstractAsbTest {
 		thenQueueIsCreated();
 	}
 	
-	private void givenEmptyQueue() throws ServiceException {
-		ReceiveQueueMessageResult brMessage = new ReceiveQueueMessageResult(null);
-		when(service.receiveQueueMessage(eq("aQueue"),
-						isA(ReceiveMessageOptions.class)))
-				.thenReturn(brMessage);
-	}
-
 	@Test
 	public void verifyThatServiceMethodIsInvoedWhenRequest() throws ServiceException {
 		givenWeHaveListOfQueues("aQueue");

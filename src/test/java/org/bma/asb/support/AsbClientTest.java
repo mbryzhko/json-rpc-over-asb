@@ -45,6 +45,7 @@ public class AsbClientTest extends AbstractAsbTest {
 		client = new AsbClient();
 		client.setQueue(queue);
 		client.setAsbJsonRpc(rpcClient);
+		client.setReponsePullTimeout(10);
 	}
 	
 	@Rule
@@ -110,16 +111,38 @@ public class AsbClientTest extends AbstractAsbTest {
 		assertThat(Integer.class.cast(result), CoreMatchers.is(100));
 	
 	}
+	
+	@Test
+	public void verifyThatAClientPullsResponseFromQueue() throws ServiceException, SecurityException, NoSuchMethodException {
+		givenWeHaveListOfQueues("aQueue");
+		givenWeHaveEmptyAndReponseMessagesInAQueue();
+		
+		// when
+		Object result = client.invoke(TestService.class.getDeclaredMethod("createNewIdea", String.class), "foo");
+		
+		// then
+		assertThat(Integer.class.cast(result), CoreMatchers.is(100));
+		
+	}
 
+	private void givenWeHaveEmptyAndReponseMessagesInAQueue() throws ServiceException {
+		when(service.receiveQueueMessage(eq("aQueue"), isA(ReceiveMessageOptions.class)))
+		.thenReturn(emptyMessage(), reponseMessage());
+	}
+	
 	private void givenWeHaveResponseMessageInAQueue() throws ServiceException {
+		when(service.receiveQueueMessage(eq("aQueue"), isA(ReceiveMessageOptions.class)))
+				.thenReturn(reponseMessage());
+	}
+
+	private ReceiveQueueMessageResult reponseMessage() {
 		InputStream requstIs = this.getClass().getResourceAsStream("/createIdeaResponse.txt");
 		BrokeredMessage message = new BrokeredMessage(requstIs);
 		message.setReplyToSessionId("200");
 		message.setMessageId("MsgId");
 
 		ReceiveQueueMessageResult brMessage = new ReceiveQueueMessageResult(message);
-		when(service.receiveQueueMessage(eq("aQueue"), isA(ReceiveMessageOptions.class)))
-				.thenReturn(brMessage);
+		return brMessage;
 	}
 
 	private void givenWeHaveAQueue() {

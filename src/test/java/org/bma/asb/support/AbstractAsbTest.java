@@ -1,6 +1,8 @@
 package org.bma.asb.support;
 
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.when;
 
 import java.io.BufferedReader;
@@ -17,6 +19,8 @@ import com.microsoft.windowsazure.services.serviceBus.ServiceBusContract;
 import com.microsoft.windowsazure.services.serviceBus.models.BrokeredMessage;
 import com.microsoft.windowsazure.services.serviceBus.models.ListQueuesResult;
 import com.microsoft.windowsazure.services.serviceBus.models.QueueInfo;
+import com.microsoft.windowsazure.services.serviceBus.models.ReceiveMessageOptions;
+import com.microsoft.windowsazure.services.serviceBus.models.ReceiveQueueMessageResult;
 
 public abstract class AbstractAsbTest {
 	@Mock
@@ -42,5 +46,16 @@ public abstract class AbstractAsbTest {
 		String jsonRpcRequest = br.readLine();
 		System.out.println(jsonRpcRequest);
 		assertThat(jsonRpcRequest, CoreMatchers.containsString(expectedBodyText));
+	}
+	
+	protected void givenEmptyQueue() throws ServiceException {
+		when(service.receiveQueueMessage(eq("aQueue"),
+						isA(ReceiveMessageOptions.class)))
+				.thenReturn(emptyMessage());
+	}
+
+	protected ReceiveQueueMessageResult emptyMessage() {
+		ReceiveQueueMessageResult brMessage = new ReceiveQueueMessageResult(null);
+		return brMessage;
 	}
 }

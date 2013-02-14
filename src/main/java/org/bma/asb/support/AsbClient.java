@@ -15,6 +15,7 @@ public class AsbClient {
 	
 	private AsbQueue queue;
 	private AsbJsonRpcClient absJsonRpc;
+	private long reponsePullTimeout = 10000;
 	
 	public Object invoke(Method method, Object... args) {
 		UUID sessionId = UUID.randomUUID();
@@ -32,16 +33,35 @@ public class AsbClient {
 		LOG.debug("Sending request to service in session: {}", sessionId);
 		queue.sendRequest(jsonRpcMessage);
 		
-		BrokeredMessage message = queue.receiveMessage();
 		Object result = Integer.valueOf(0);
-		if (message != null && message.getMessageId() != null) {
+		
+		BrokeredMessage message = pullResponseMessage();
+		if (message != null) {
 			LOG.debug("Processing reponse for session {}", sessionId);
 			InputStream responseIs = message.getBody();
 			Class<?> methodReturnType = method.getReturnType();
 			result = absJsonRpc.deserialiseReponse(responseIs, methodReturnType);
-		} else {
-			LOG.debug("Received empty reponse");
+		} 
+		
+		return result;
+	}
+
+	private BrokeredMessage pullResponseMessage() {
+		BrokeredMessage result = null;
+		long start = System.currentTimeMillis();
+		while (result == null && System.currentTimeMillis() - start < reponsePullTimeout) {
+			BrokeredMessage message = queue.receiveMessage();
+			if (message != null && message.getMessageId() != null) {
+				result = message;
+			} else {
+				LOG.debug("Recevied empty message");
+			}
 		}
+		
+		if (result == null) {
+			LOG.warn("Response pulling timeout");
+		}
+			
 		return result;
 	}
 
@@ -60,4 +80,14 @@ public class AsbClient {
 	public void setAsbJsonRpc(AsbJsonRpcClient jsonRpc) {
 		this.absJsonRpc = jsonRpc;
 	}
+
+	public long getReponsePullTimeout() {
+		return reponsePullTimeout;
+	}
+
+	public void setReponsePullTimeout(long reponsePullTimeout) {
+		this.reponsePullTimeout = reponsePullTimeout;
+	}
+	
+	
 }
