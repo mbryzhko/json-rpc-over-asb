@@ -30,18 +30,18 @@ public class AsbClient {
 	}
 	
 	public Object invoke(Method method, Object... args) {
-		UUID sessionId = UUID.randomUUID();
-		LOG.debug("Preparing request for method: {} within session: {}", method.getName(), sessionId);
+		UUID corrId = UUID.randomUUID();
+		LOG.debug("Preparing request for method: {} with corr id: {}", method.getName(), corrId);
 		
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		absJsonRpc.serialiseRequest(outputStream, method, args);
 		byte[] jsonRpcRequest = outputStream.toByteArray();
 		
 		BrokeredMessage jsonRpcMessage = new BrokeredMessage(jsonRpcRequest);
-		jsonRpcMessage.setSessionId(sessionId.toString());
 		jsonRpcMessage.setReplyTo(responseQueue.getPath());
+		jsonRpcMessage.setCorrelationId(corrId.toString());
 		
-		LOG.debug("Sending request to service in session: {}", sessionId);
+		LOG.debug("Sending request to service for corr id: {}", corrId);
 		queue.sendRequest(jsonRpcMessage);
 		
 		Object result = Integer.valueOf(0);
