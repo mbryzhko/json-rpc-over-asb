@@ -28,7 +28,7 @@ import com.microsoft.windowsazure.services.serviceBus.models.ReceiveQueueMessage
 @RunWith(MockitoJUnitRunner.class)
 public class AsbServiceTest extends AbstractAsbTest {
 	
-	private AsbQueue queue;
+	private DefaultAsbQueue queue;
 
 	private AsbService asbService;
 	
@@ -145,6 +145,8 @@ public class AsbServiceTest extends AbstractAsbTest {
 	}
 
 	private void givenWeHaveAQueue() {
-		queue = new AsbQueue("aQueue", serviceManager);
+		queue = new DefaultAsbQueue();
+		queue.setPath("aQueue");
+		queue.setServiceManager(serviceManager);
 	}
 }

@@ -29,7 +29,7 @@ public class AsbClientTest extends AbstractAsbTest {
 	
 	private AsbClient client;
 	
-	private AsbQueue queue;
+	private DefaultAsbQueue queue;
 	
 	private DefaultAsbJsonRpcClient rpcClient;
 	
@@ -146,7 +146,9 @@ public class AsbClientTest extends AbstractAsbTest {
 	}
 
 	private void givenWeHaveAQueue() {
-		queue = new AsbQueue("aQueue", serviceManager);
+		queue = new DefaultAsbQueue();
+		queue.setPath("aQueue");
+		queue.setServiceManager(serviceManager);
 	}
 	
 	
