@@ -37,7 +37,7 @@ public class AsbClient {
 		
 		BrokeredMessage message = pullResponseMessage();
 		if (message != null) {
-			LOG.debug("Processing reponse for session {}", sessionId);
+			LOG.debug("Processing response from queue {}, Details {}", queue.getPath(), BrokeredMessageHelper.messageDetails(message));
 			InputStream responseIs = message.getBody();
 			Class<?> methodReturnType = method.getReturnType();
 			result = absJsonRpc.deserialiseReponse(responseIs, methodReturnType);

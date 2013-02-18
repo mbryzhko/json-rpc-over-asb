@@ -78,7 +78,7 @@ public class AsbQueue {
 			 ReceiveQueueMessageResult message = serviceManager.getService()
 					.receiveQueueMessage(path, receiveMessageOptions);
 			
-			LOG.debug("Recevied message {} from gueue {}", message, getPath());
+			LOG.trace("Recevied message {} from gueue {}", message, getPath());
 			
 			return message != null ? message.getValue() : null;
 		} catch (ServiceException e) {
