@@ -57,13 +57,17 @@ public class AsbClientTest extends AbstractAsbTest {
 		
 		expectedException.expect(AsbException.class);
 		
-		// when
-		client.invoke(TestService.class.getDeclaredMethod("createNewIdea", String.class), "foo");
+		whenAClientIsInited();
+	}
+
+	private void whenAClientIsInited() {
+		client.init();
 	}
 	
 	@Test
 	public void verifyThatMessageIsSentToService() throws ServiceException, SecurityException, NoSuchMethodException {
 		givenWeHaveListOfQueues("aQueue");
+		whenAClientIsInited();
 		
 		// when
 		client.invoke(TestService.class.getDeclaredMethod("createNewIdea", String.class), "foo");
@@ -75,6 +79,7 @@ public class AsbClientTest extends AbstractAsbTest {
 	@Test
 	public void verifyThatMessageIsSentHasASession() throws ServiceException, SecurityException, NoSuchMethodException {
 		givenWeHaveListOfQueues("aQueue");
+		whenAClientIsInited();
 		
 		// when
 		client.invoke(TestService.class.getDeclaredMethod("createNewIdea", String.class), "foo");
@@ -88,6 +93,7 @@ public class AsbClientTest extends AbstractAsbTest {
 	@Test
 	public void verifyThatMessageIsSentHasJsonRpcRequest() throws ServiceException, SecurityException, NoSuchMethodException, IOException {
 		givenWeHaveListOfQueues("aQueue");
+		whenAClientIsInited();
 		
 		// when
 		client.invoke(TestService.class.getDeclaredMethod("createNewIdea", String.class), "foo");
@@ -103,6 +109,7 @@ public class AsbClientTest extends AbstractAsbTest {
 	public void verifyThatResponseMessageDeserialisedIntoResult() throws ServiceException, SecurityException, NoSuchMethodException {
 		givenWeHaveListOfQueues("aQueue");
 		givenWeHaveResponseMessageInAQueue();
+		whenAClientIsInited();
 		
 		// when
 		Object result = client.invoke(TestService.class.getDeclaredMethod("createNewIdea", String.class), "foo");
@@ -116,6 +123,7 @@ public class AsbClientTest extends AbstractAsbTest {
 	public void verifyThatAClientPullsResponseFromQueue() throws ServiceException, SecurityException, NoSuchMethodException {
 		givenWeHaveListOfQueues("aQueue");
 		givenWeHaveEmptyAndReponseMessagesInAQueue();
+		whenAClientIsInited();
 		
 		// when
 		Object result = client.invoke(TestService.class.getDeclaredMethod("createNewIdea", String.class), "foo");
@@ -123,6 +131,11 @@ public class AsbClientTest extends AbstractAsbTest {
 		// then
 		assertThat(Integer.class.cast(result), CoreMatchers.is(100));
 		
+	}
+	
+	@Test
+	public void verifyThatResponseQueueIsCreatedBeforeStart() throws ServiceException {
+		givenWeHaveListOfQueues("aQueue");
 	}
 
 	private void givenWeHaveEmptyAndReponseMessagesInAQueue() throws ServiceException {

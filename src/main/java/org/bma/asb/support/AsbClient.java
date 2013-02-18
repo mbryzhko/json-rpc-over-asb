@@ -17,11 +17,14 @@ public class AsbClient {
 	private AsbJsonRpcClient absJsonRpc;
 	private long reponsePullTimeout = 10000;
 	
+	public void init() {
+		LOG.info("Initialising client");
+		queue.assertCreated();
+	}
+	
 	public Object invoke(Method method, Object... args) {
 		UUID sessionId = UUID.randomUUID();
 		LOG.debug("Preparing request for method: {} within session: {}", method.getName(), sessionId);
-		
-		queue.assertCreated();
 		
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		absJsonRpc.serialiseRequest(outputStream, method, args);
