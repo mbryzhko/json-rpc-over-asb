@@ -39,6 +39,7 @@ public class AsbClient {
 		
 		BrokeredMessage jsonRpcMessage = new BrokeredMessage(jsonRpcRequest);
 		jsonRpcMessage.setSessionId(sessionId.toString());
+		jsonRpcMessage.setReplyTo(responseQueue.getPath());
 		
 		LOG.debug("Sending request to service in session: {}", sessionId);
 		queue.sendRequest(jsonRpcMessage);

@@ -1,5 +1,6 @@
 package org.bma.asb.support;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isA;
@@ -103,10 +104,15 @@ public class AsbClientTest extends AbstractAsbTest {
 		client.invoke(TestService.class.getDeclaredMethod("createNewIdea", String.class), "foo");
 	
 		// then
+		BrokeredMessage message = expectedRequestMessage();
+		assertMessageBody(message, "\"method\":\"createNewIdea\",\"params\":{\"name\":\"foo\"}");
+	}
+
+	private BrokeredMessage expectedRequestMessage() throws ServiceException {
 		ArgumentCaptor<BrokeredMessage> msgCap = ArgumentCaptor.forClass(BrokeredMessage.class);
 		verify(service).sendQueueMessage(Matchers.eq("aQueue"), msgCap.capture());
 		BrokeredMessage message = msgCap.getValue();
-		assertMessageBody(message, "\"method\":\"createNewIdea\",\"params\":{\"name\":\"foo\"}");
+		return message;
 	}
 	
 	@Test
@@ -144,6 +150,22 @@ public class AsbClientTest extends AbstractAsbTest {
 		whenAClientIsInited();
 		
 		thenResponseQueueIsCreated();
+	}
+	
+	@Test
+	public void verifyThatRequestHasResponseQueueName() throws ServiceException, SecurityException, NoSuchMethodException {
+		givenWeHaveListOfQueues("aQueue");
+		whenAClientIsInited();
+		
+		// when
+		Object result = client.invoke(TestService.class.getDeclaredMethod("createNewIdea", String.class), "foo");
+		
+		thenRequestMessageHasReponseQueue();
+	}
+
+	private void thenRequestMessageHasReponseQueue() throws ServiceException {
+		BrokeredMessage message = expectedRequestMessage();
+		assertThat(message.getReplyTo(), equalTo("aReponseQueue"));
 	}
 
 	private void thenResponseQueueIsCreated() throws ServiceException {
