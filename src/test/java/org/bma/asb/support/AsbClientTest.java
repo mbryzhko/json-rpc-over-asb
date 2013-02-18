@@ -3,6 +3,7 @@ package org.bma.asb.support;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isA;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -21,6 +22,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import com.microsoft.windowsazure.services.core.ServiceException;
 import com.microsoft.windowsazure.services.serviceBus.models.BrokeredMessage;
+import com.microsoft.windowsazure.services.serviceBus.models.QueueInfo;
 import com.microsoft.windowsazure.services.serviceBus.models.ReceiveMessageOptions;
 import com.microsoft.windowsazure.services.serviceBus.models.ReceiveQueueMessageResult;
 
@@ -30,6 +32,7 @@ public class AsbClientTest extends AbstractAsbTest {
 	private AsbClient client;
 	
 	private DefaultAsbQueue queue;
+	private DefaultAsbQueue responseQueue;
 	
 	private DefaultAsbJsonRpcClient rpcClient;
 	
@@ -44,6 +47,7 @@ public class AsbClientTest extends AbstractAsbTest {
 	private void givenWeHaveAClient() {
 		client = new AsbClient();
 		client.setQueue(queue);
+		client.setResponseQueue(responseQueue);
 		client.setAsbJsonRpc(rpcClient);
 		client.setReponsePullTimeout(10);
 	}
@@ -100,7 +104,7 @@ public class AsbClientTest extends AbstractAsbTest {
 	
 		// then
 		ArgumentCaptor<BrokeredMessage> msgCap = ArgumentCaptor.forClass(BrokeredMessage.class);
-		Mockito.verify(service).sendQueueMessage(Matchers.eq("aQueue"), msgCap.capture());
+		verify(service).sendQueueMessage(Matchers.eq("aQueue"), msgCap.capture());
 		BrokeredMessage message = msgCap.getValue();
 		assertMessageBody(message, "\"method\":\"createNewIdea\",\"params\":{\"name\":\"foo\"}");
 	}
@@ -136,6 +140,14 @@ public class AsbClientTest extends AbstractAsbTest {
 	@Test
 	public void verifyThatResponseQueueIsCreatedBeforeStart() throws ServiceException {
 		givenWeHaveListOfQueues("aQueue");
+		
+		whenAClientIsInited();
+		
+		thenResponseQueueIsCreated();
+	}
+
+	private void thenResponseQueueIsCreated() throws ServiceException {
+		verify(service).createQueue(isA(QueueInfo.class));
 	}
 
 	private void givenWeHaveEmptyAndReponseMessagesInAQueue() throws ServiceException {
@@ -162,6 +174,10 @@ public class AsbClientTest extends AbstractAsbTest {
 		queue = new DefaultAsbQueue();
 		queue.setPath("aQueue");
 		queue.setServiceManager(serviceManager);
+		
+		responseQueue = new DefaultAsbQueue();
+		responseQueue.setPath("aReponseQueue");
+		responseQueue.setServiceManager(serviceManager);
 	}
 	
 	

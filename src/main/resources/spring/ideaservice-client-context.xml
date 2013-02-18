@@ -10,9 +10,10 @@
 		<property name="client" ref="ideaServiceQueueClient" />
 	</bean>
 
-	<bean id="ideaServiceQueueClient" class="org.bma.asb.support.AsbClient">
+	<bean id="ideaServiceQueueClient" class="org.bma.asb.support.AsbClient" init-method="init">
 		<property name="asbJsonRpc" ref="jsonRpc" />
 		<property name="queue" ref="ideaServiceQueue" />
+		<property name="responseQueue" ref="ideaServiceResponseQueue" />
 	</bean>
 
 	<bean id="jsonRpc" class="org.bma.asb.support.DefaultAsbJsonRpcClient"></bean>
