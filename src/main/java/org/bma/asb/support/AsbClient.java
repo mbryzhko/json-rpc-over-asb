@@ -3,7 +3,6 @@ package org.bma.asb.support;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.lang.reflect.Method;
-import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +17,7 @@ public class AsbClient {
 	private AsbQueue responseQueue;
 	private AsbJsonRpcClient absJsonRpc;
 	private long reponsePullTimeout = 10000;
+	private CorrelationId correlationId = new DefaultCorrelationId();
 	
 	public void init() {
 		LOG.info("Initialising client");
@@ -30,7 +30,7 @@ public class AsbClient {
 	}
 	
 	public Object invoke(Method method, Object... args) {
-		UUID corrId = UUID.randomUUID();
+		String corrId = correlationId.nextId();
 		LOG.debug("Preparing request for method: {} with corr id: {}", method.getName(), corrId);
 		
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -39,14 +39,14 @@ public class AsbClient {
 		
 		BrokeredMessage jsonRpcMessage = new BrokeredMessage(jsonRpcRequest);
 		jsonRpcMessage.setReplyTo(responseQueue.getPath());
-		jsonRpcMessage.setCorrelationId(corrId.toString());
+		jsonRpcMessage.setCorrelationId(corrId);
 		
 		LOG.debug("Sending request to service for corr id: {}", corrId);
 		queue.sendRequest(jsonRpcMessage);
 		
 		Object result = Integer.valueOf(0);
 		
-		BrokeredMessage message = pullResponseMessage();
+		BrokeredMessage message = pullResponseMessage(corrId);
 		if (message != null) {
 			LOG.debug("Processing response from queue {}, Details {}", queue.getPath(), BrokeredMessageHelper.messageDetails(message));
 			InputStream responseIs = message.getBody();
@@ -57,13 +57,17 @@ public class AsbClient {
 		return result;
 	}
 
-	private BrokeredMessage pullResponseMessage() {
+	private BrokeredMessage pullResponseMessage(String corrId) {
 		BrokeredMessage result = null;
 		long start = System.currentTimeMillis();
 		while (result == null && System.currentTimeMillis() - start < reponsePullTimeout) {
 			BrokeredMessage message = queue.receiveMessage();
 			if (message != null && message.getMessageId() != null) {
-				result = message;
+				if (corrId.equals(message.getCorrelationId())) {
+					result = message;
+				} else {
+					LOG.debug("Received message with wrong correlation Id.");
+				}
 			} else {
 				LOG.debug("Recevied empty message");
 			}
@@ -109,6 +113,14 @@ public class AsbClient {
 	@Required
 	public void setResponseQueue(AsbQueue responseQueue) {
 		this.responseQueue = responseQueue;
+	}
+
+	public CorrelationId getCorrelationId() {
+		return correlationId;
+	}
+
+	public void setCorrelationId(CorrelationId correlationId) {
+		this.correlationId = correlationId;
 	}
 	
 }

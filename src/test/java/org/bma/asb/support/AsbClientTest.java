@@ -37,9 +37,11 @@ public class AsbClientTest extends AbstractAsbTest {
 	private DefaultAsbQueue responseQueue;
 	
 	private DefaultAsbJsonRpcClient rpcClient;
+	private TestCorrelationId correlationId = new TestCorrelationId();
 	
 	@Before
 	public void before() {
+		correlationId.nextIdShouldBeUnique();
 		rpcClient = new DefaultAsbJsonRpcClient();
 		givenWeHaveAServiceManager();
 		givenWeHaveAQueue();
@@ -52,6 +54,7 @@ public class AsbClientTest extends AbstractAsbTest {
 		client.setResponseQueue(responseQueue);
 		client.setAsbJsonRpc(rpcClient);
 		client.setReponsePullTimeout(10);
+		client.setCorrelationId(correlationId);
 	}
 	
 	@Rule
@@ -120,7 +123,7 @@ public class AsbClientTest extends AbstractAsbTest {
 	@Test
 	public void verifyThatResponseMessageDeserialisedIntoResult() throws ServiceException, SecurityException, NoSuchMethodException {
 		givenWeHaveListOfQueues("aQueue");
-		givenWeHaveResponseMessageInAQueue();
+		givenWeHaveQueueWith(reponseMessage());
 		whenAClientIsInited();
 		
 		// when
@@ -134,7 +137,7 @@ public class AsbClientTest extends AbstractAsbTest {
 	@Test
 	public void verifyThatAClientPullsResponseFromQueue() throws ServiceException, SecurityException, NoSuchMethodException {
 		givenWeHaveListOfQueues("aQueue");
-		givenWeHaveEmptyAndReponseMessagesInAQueue();
+		givenWeHaveQueueWith(emptyMessage(), reponseMessage());
 		whenAClientIsInited();
 		
 		// when
@@ -171,14 +174,32 @@ public class AsbClientTest extends AbstractAsbTest {
 		whenAClientIsInited();
 		
 		// when
-		Object result = client.invoke(TestService.class.getDeclaredMethod("createNewIdea", String.class), "foo");
-		
-		thenRequestMessageHasCorrelationId();
+		client.invoke(TestService.class.getDeclaredMethod("createNewIdea", String.class), "foo");
+		String one = thenRequestMessageHasCorrelationId();
+	
+		Mockito.reset(service);
+		client.invoke(TestService.class.getDeclaredMethod("createNewIdea", String.class), "foo");
+		String two = thenRequestMessageHasCorrelationId();
+	
+		assertThat(one, CoreMatchers.not(CoreMatchers.equalTo(two)));
 	}
 
-	private void thenRequestMessageHasCorrelationId() throws ServiceException {
+	@Test
+	public void verifyThatResponseWithWrongCorrelationIdIsIgnored() throws ServiceException, SecurityException, NoSuchMethodException {
+		givenWeHaveListOfQueues("aQueue");
+		givenWeHaveQueueWith(reponseMessageWithWrongCorrId(), reponseMessage());
+		whenAClientIsInited();
+		
+		// when
+		Object result = client.invoke(TestService.class.getDeclaredMethod("createNewIdea", String.class), "foo");
+		
+		assertThat(Integer.class.cast(result), CoreMatchers.is(100));
+	}
+	
+	private String thenRequestMessageHasCorrelationId() throws ServiceException {
 		BrokeredMessage message = expectedRequestMessage();
 		assertThat(message.getCorrelationId(), CoreMatchers.notNullValue());
+		return message.getCorrelationId();
 	}
 
 	private void thenRequestMessageHasReponseQueue() throws ServiceException {
@@ -190,21 +211,26 @@ public class AsbClientTest extends AbstractAsbTest {
 		verify(service).createQueue(isA(QueueInfo.class));
 	}
 
-	private void givenWeHaveEmptyAndReponseMessagesInAQueue() throws ServiceException {
+	private void givenWeHaveQueueWith(ReceiveQueueMessageResult message, ReceiveQueueMessageResult... messages ) throws ServiceException {
 		when(service.receiveQueueMessage(eq("aQueue"), isA(ReceiveMessageOptions.class)))
-		.thenReturn(emptyMessage(), reponseMessage());
-	}
-	
-	private void givenWeHaveResponseMessageInAQueue() throws ServiceException {
-		when(service.receiveQueueMessage(eq("aQueue"), isA(ReceiveMessageOptions.class)))
-				.thenReturn(reponseMessage());
+		.thenReturn(message, messages);
 	}
 
 	private ReceiveQueueMessageResult reponseMessage() {
 		InputStream requstIs = this.getClass().getResourceAsStream("/createIdeaResponse.txt");
 		BrokeredMessage message = new BrokeredMessage(requstIs);
-		message.setReplyToSessionId("200");
 		message.setMessageId("MsgId");
+		correlationId.setNextCorrelationId("CorrId");
+		message.setCorrelationId("CorrId");
+
+		ReceiveQueueMessageResult brMessage = new ReceiveQueueMessageResult(message);
+		return brMessage;
+	}
+	
+	private ReceiveQueueMessageResult reponseMessageWithWrongCorrId() {
+		BrokeredMessage message = new BrokeredMessage("WrongMessage");
+		message.setMessageId("MsgId");
+		message.setCorrelationId("WrongCorrId");
 
 		ReceiveQueueMessageResult brMessage = new ReceiveQueueMessageResult(message);
 		return brMessage;
