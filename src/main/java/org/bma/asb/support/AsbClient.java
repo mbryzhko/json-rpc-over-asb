@@ -61,7 +61,7 @@ public class AsbClient {
 		BrokeredMessage result = null;
 		long start = System.currentTimeMillis();
 		while (result == null && System.currentTimeMillis() - start < reponsePullTimeout) {
-			BrokeredMessage message = queue.receiveMessage();
+			BrokeredMessage message = responseQueue.receiveMessage();
 			if (message != null && message.getMessageId() != null) {
 				if (corrId.equals(message.getCorrelationId())) {
 					result = message;

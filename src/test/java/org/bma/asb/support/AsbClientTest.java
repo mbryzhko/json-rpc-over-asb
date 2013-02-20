@@ -212,7 +212,7 @@ public class AsbClientTest extends AbstractAsbTest {
 	}
 
 	private void givenWeHaveQueueWith(ReceiveQueueMessageResult message, ReceiveQueueMessageResult... messages ) throws ServiceException {
-		when(service.receiveQueueMessage(eq("aQueue"), isA(ReceiveMessageOptions.class)))
+		when(service.receiveQueueMessage(eq("aReponseQueue"), isA(ReceiveMessageOptions.class)))
 		.thenReturn(message, messages);
 	}
 

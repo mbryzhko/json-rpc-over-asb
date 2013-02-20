@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Required;
 
 import com.microsoft.windowsazure.services.serviceBus.models.BrokeredMessage;
 
@@ -14,6 +15,7 @@ public class AsbService {
 	private final static Logger LOG = LoggerFactory.getLogger(AsbService.class);
 	
 	private JsonRpcRequestHandler requestHandler;
+	private ResponseQueueManager responseQueueManager;
 	private AsbQueue queue;
 	private volatile boolean running = false;
 	/** Stop service after specified count of messages received. */
@@ -69,10 +71,12 @@ public class AsbService {
 			requestHandler.handleRequest(requestIs, responceOs);
 			
 			BrokeredMessage response = new BrokeredMessage(responceOs.toByteArray());
-			response.setReplyToSessionId(request.getSessionId());
+			response.setCorrelationId(request.getCorrelationId());
 			
-			LOG.debug("Sending response to queue: {} for session: {}", queue.getPath(), response.getReplyToSessionId());
-			queue.sendRequest(response);
+			String responseQueueName = request.getReplyTo();
+			AsbQueue reponseQueue = responseQueueManager.getResponseQueue(responseQueueName);
+			LOG.debug("Sending response to queue: {} for session: {}", responseQueueName, response.getReplyToSessionId());
+			reponseQueue.sendRequest(response);
 			
 		} else {
 			LOG.trace("Reveived empty message from queue: {}", queue.getPath());
@@ -97,4 +101,14 @@ public class AsbService {
 	public void setStopAfter(int stopAfter) {
 		this.stopAfter = stopAfter;
 	}
+	
+	public ResponseQueueManager getResponseQueueManager() {
+		return responseQueueManager;
+	}
+	
+	@Required
+	public void setResponseQueueManager(ResponseQueueManager responseQueueManager) {
+		this.responseQueueManager = responseQueueManager;
+	}
+	
 }

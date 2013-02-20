@@ -20,9 +20,6 @@
 		<property name="serviceManager" ref="makeThingsServiceManager" />
 	</bean>
 	
-	<bean id="ideaServiceResponseQueue" class="org.bma.asb.support.DefaultAsbQueue">
-		<property name="path" value="${idea.service.asb.reps.path}" />
-		<property name="serviceManager" ref="makeThingsServiceManager" />
-	</bean>
+	
 	
 </beans>

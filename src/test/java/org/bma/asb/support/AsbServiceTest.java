@@ -1,5 +1,7 @@
 package org.bma.asb.support;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.verify;
@@ -29,6 +31,8 @@ import com.microsoft.windowsazure.services.serviceBus.models.ReceiveQueueMessage
 public class AsbServiceTest extends AbstractAsbTest {
 	
 	private DefaultAsbQueue queue;
+	
+	private DefaultAsbQueue responseQueue;
 
 	private AsbService asbService;
 	
@@ -36,6 +40,9 @@ public class AsbServiceTest extends AbstractAsbTest {
 	
 	@Mock
 	public TestService testService;
+
+	@Mock
+	private ResponseQueueManager responseQueueManager;
 
 	@Before
 	public void setUp() {
@@ -46,7 +53,16 @@ public class AsbServiceTest extends AbstractAsbTest {
 		
 		givenWeHaveAServiceManager();
 		givenWeHaveAQueue();
+		givenWeHaveAResponseQueue();
 		givenWeHaveAnAsbService();
+	}
+
+	private void givenWeHaveAResponseQueue() {
+		responseQueue = new DefaultAsbQueue();
+		responseQueue.setPath("aResponseQueue");
+		responseQueue.setServiceManager(serviceManager);
+		
+		when(responseQueueManager.getResponseQueue(eq("aResponseQueue"))).thenReturn(responseQueue);
 	}
 
 	@Test
@@ -86,7 +102,7 @@ public class AsbServiceTest extends AbstractAsbTest {
 	}
 	
 	@Test
-	public void verifyThatReponceIsSentWithReplayToSessionId() throws ServiceException, IOException {
+	public void verifyThatResponseIsSentWithCorrelationId() throws ServiceException, IOException {
 		givenWeHaveListOfQueues("aQueue");
 		givenWeHaveMessageInQueue();
 		givenWeHaveResultOfServiceMethodInvoke();
@@ -94,15 +110,15 @@ public class AsbServiceTest extends AbstractAsbTest {
 		whenStartService();
 		
 		ArgumentCaptor<BrokeredMessage> bmc = ArgumentCaptor.forClass(BrokeredMessage.class);
-		verify(service).sendQueueMessage(Matchers.eq("aQueue"), bmc.capture());
+		verify(service).sendQueueMessage(Matchers.eq("aResponseQueue"), bmc.capture());
 		BrokeredMessage message = bmc.getValue();
-		Assert.assertThat(message.getReplyToSessionId(), CoreMatchers.equalTo("200"));
+		assertThat(message.getCorrelationId(), equalTo("CorrId"));
 	}
 	
 
 	private void thenResultIsSentInMessage() throws IOException, ServiceException {
 		ArgumentCaptor<BrokeredMessage> bmc = ArgumentCaptor.forClass(BrokeredMessage.class);
-		verify(service).sendQueueMessage(Matchers.eq("aQueue"), bmc.capture());
+		verify(service).sendQueueMessage(Matchers.eq("aResponseQueue"), bmc.capture());
 		BrokeredMessage message = bmc.getValue();
 		System.out.println(message);
 		assertMessageBody(message, "\"result\":100");
@@ -116,8 +132,9 @@ public class AsbServiceTest extends AbstractAsbTest {
 		InputStream requstIs = AsbServiceTest.class
 				.getResourceAsStream("/createIdeaRequest.txt");
 		BrokeredMessage message = new BrokeredMessage(requstIs);
-		message.setSessionId("200");
 		message.setMessageId("MsgId");
+		message.setReplyTo("aResponseQueue");
+		message.setCorrelationId("CorrId");
 		
 		ReceiveQueueMessageResult brMessage = new ReceiveQueueMessageResult(message);
 		when(service.receiveQueueMessage(eq("aQueue"),
@@ -136,6 +153,7 @@ public class AsbServiceTest extends AbstractAsbTest {
 	private void givenWeHaveAnAsbService() {
 		asbService = new AsbService();
 		asbService.setQueue(queue);
+		asbService.setResponseQueueManager(responseQueueManager);
 		asbService.setRequestHandler(requestHandler);
 		asbService.setStopAfter(1);
 	}
@@ -148,5 +166,6 @@ public class AsbServiceTest extends AbstractAsbTest {
 		queue = new DefaultAsbQueue();
 		queue.setPath("aQueue");
 		queue.setServiceManager(serviceManager);
+		
 	}
 }
