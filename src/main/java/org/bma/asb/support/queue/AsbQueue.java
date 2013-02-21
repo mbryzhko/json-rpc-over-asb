@@ -1,4 +1,6 @@
-package org.bma.asb.support;
+package org.bma.asb.support.queue;
+
+import org.bma.asb.support.AsbException;
 
 import com.microsoft.windowsazure.services.serviceBus.models.BrokeredMessage;
 

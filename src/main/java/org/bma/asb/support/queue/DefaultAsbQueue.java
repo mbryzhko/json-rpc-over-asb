@@ -1,5 +1,7 @@
-package org.bma.asb.support;
+package org.bma.asb.support.queue;
 
+import org.bma.asb.support.AsbException;
+import org.bma.asb.support.AsbServiceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -15,7 +15,7 @@
 		<property name="wrapRootUri" value="${idea.service.asb.wrapRootUri}" />
 	</bean>
 	
-	<bean id="ideaServiceQueue" class="org.bma.asb.support.DefaultAsbQueue">
+	<bean id="ideaServiceQueue" class="org.bma.asb.support.queue.DefaultAsbQueue">
 		<property name="path" value="${idea.service.asb.path}" />
 		<property name="serviceManager" ref="makeThingsServiceManager" />
 	</bean>

@@ -1,5 +1,7 @@
 package org.bma.asb.support;
 
+import org.bma.asb.support.queue.AsbQueue;
+import org.bma.asb.support.queue.DefaultAsbQueue;
 import org.bma.asb.support.queue.ResponseQueueNaming;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Required;
