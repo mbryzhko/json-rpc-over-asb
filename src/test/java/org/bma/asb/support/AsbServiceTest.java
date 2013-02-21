@@ -12,6 +12,8 @@ import java.io.InputStream;
 
 import org.bma.asb.support.queue.AsbResponseQueueManager;
 import org.bma.asb.support.queue.DefaultAsbQueue;
+import org.bma.asb.support.service.AsbService;
+import org.bma.asb.support.service.DefaultJsonRpcRequestHandler;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

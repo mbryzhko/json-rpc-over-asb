@@ -1,6 +1,6 @@
 package org.bma.asb.service;
 
-import org.bma.asb.support.AsbService;
+import org.bma.asb.support.service.AsbService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

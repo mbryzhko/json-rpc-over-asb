@@ -1,9 +1,10 @@
-package org.bma.asb.support;
+package org.bma.asb.support.service;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.bma.asb.support.AsbException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
