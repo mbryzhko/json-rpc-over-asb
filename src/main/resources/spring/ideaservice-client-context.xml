@@ -15,11 +15,19 @@
 		<property name="queue" ref="ideaServiceQueue" />
 		<property name="responseQueue" ref="ideaServiceResponseQueue" />
 	</bean>
-
-	<bean id="ideaServiceResponseQueue" class="org.bma.asb.support.DefaultAsbQueue">
-		<property name="path" value="${idea.service.asb.reps.path}" />
+	
+	<bean id="ideaServiceResponseQueue" class="org.bma.asb.support.AsbResponseQueueFactory">
+		<property name="responseQueueNaming" ref="ideaServiceResponseQueueNaming" />
 		<property name="serviceManager" ref="makeThingsServiceManager" />
 	</bean>
+
+	<bean id="ideaServiceResponseQueueNaming" class="org.bma.asb.support.queue.TimestampResponseQueueNaming">
+		<property name="queueNamePrefix" value="${idea.service.asb.reps.path}"></property>
+	</bean>
+	<!-- bean id="ideaServiceResponseQueue" class="org.bma.asb.support.DefaultAsbQueue">
+		<property name="path" value="${idea.service.asb.reps.path}" />
+		<property name="serviceManager" ref="makeThingsServiceManager" />
+	</bean-->
 
 	<bean id="jsonRpc" class="org.bma.asb.support.DefaultAsbJsonRpcClient"></bean>
 

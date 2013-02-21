@@ -1,11 +1,19 @@
 package org.bma.asb.support;
 
+import org.bma.asb.support.queue.ResponseQueueNaming;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.annotation.Required;
 
 public class AsbResponseQueueFactory implements FactoryBean<AsbQueue> {
 
+	private ResponseQueueNaming responseQueueNaming;
+	private AsbServiceManager serviceManager;
+	
 	public AsbQueue getObject() throws Exception {
-		return null;
+		DefaultAsbQueue queue = new DefaultAsbQueue();
+		queue.setPath(responseQueueNaming.getQueueName());
+		queue.setServiceManager(serviceManager);
+		return queue;
 	}
 
 	public Class<AsbQueue> getObjectType() {
@@ -16,4 +24,22 @@ public class AsbResponseQueueFactory implements FactoryBean<AsbQueue> {
 		return true;
 	}
 
+	public ResponseQueueNaming getResponseQueueNaming() {
+		return responseQueueNaming;
+	}
+
+	@Required
+	public void setResponseQueueNaming(ResponseQueueNaming responseQueueNaming) {
+		this.responseQueueNaming = responseQueueNaming;
+	}
+
+	public AsbServiceManager getServiceManager() {
+		return serviceManager;
+	}
+
+	@Required
+	public void setServiceManager(AsbServiceManager serviceManager) {
+		this.serviceManager = serviceManager;
+	}
+	
 }

@@ -69,7 +69,7 @@ public class AsbClient {
 					LOG.debug("Received message with wrong correlation Id.");
 				}
 			} else {
-				LOG.debug("Recevied empty message");
+				LOG.debug("Received empty message");
 			}
 		}
 		
