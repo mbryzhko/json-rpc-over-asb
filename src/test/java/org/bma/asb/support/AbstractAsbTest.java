@@ -17,6 +17,7 @@ import org.mockito.Mock;
 import com.microsoft.windowsazure.services.core.ServiceException;
 import com.microsoft.windowsazure.services.serviceBus.ServiceBusContract;
 import com.microsoft.windowsazure.services.serviceBus.models.BrokeredMessage;
+import com.microsoft.windowsazure.services.serviceBus.models.GetQueueResult;
 import com.microsoft.windowsazure.services.serviceBus.models.ListQueuesResult;
 import com.microsoft.windowsazure.services.serviceBus.models.QueueInfo;
 import com.microsoft.windowsazure.services.serviceBus.models.ReceiveMessageOptions;
@@ -38,6 +39,12 @@ public abstract class AbstractAsbTest {
 		ListQueuesResult listQueuesResult = new ListQueuesResult();
 		listQueuesResult.setItems(Arrays.asList(qi));
 		when(service.listQueues()).thenReturn(listQueuesResult);
+	}
+	
+	public void givenWeHaveCreatedQueues(String... names) throws ServiceException {
+		for (String name : names) {
+			when(service.getQueue(eq(name))).thenReturn(new GetQueueResult(new QueueInfo(name)));
+		}
 	}
 
 	protected void assertMessageBody(BrokeredMessage message, String expectedBodyText) throws IOException {

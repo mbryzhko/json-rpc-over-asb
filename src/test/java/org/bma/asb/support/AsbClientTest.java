@@ -62,7 +62,7 @@ public class AsbClientTest extends AbstractAsbTest {
 	
 	@Test
 	public void verifyThatIfNoQueueThenException() throws SecurityException, NoSuchMethodException, ServiceException {
-		givenWeHaveListOfQueues("myQueue");
+		givenWeHaveCreatedQueues("myQueue");
 		
 		expectedException.expect(AsbException.class);
 		
@@ -75,7 +75,7 @@ public class AsbClientTest extends AbstractAsbTest {
 	
 	@Test
 	public void verifyThatMessageIsSentToService() throws ServiceException, SecurityException, NoSuchMethodException {
-		givenWeHaveListOfQueues("aQueue");
+		givenWeHaveCreatedQueues("aQueue");
 		whenAClientIsInited();
 		
 		// when
@@ -88,7 +88,7 @@ public class AsbClientTest extends AbstractAsbTest {
 	@Test
 	@Ignore
 	public void verifyThatMessageIsSentHasASession() throws ServiceException, SecurityException, NoSuchMethodException {
-		givenWeHaveListOfQueues("aQueue");
+		givenWeHaveCreatedQueues("aQueue");
 		whenAClientIsInited();
 		
 		// when
@@ -102,7 +102,7 @@ public class AsbClientTest extends AbstractAsbTest {
 	
 	@Test
 	public void verifyThatMessageIsSentHasJsonRpcRequest() throws ServiceException, SecurityException, NoSuchMethodException, IOException {
-		givenWeHaveListOfQueues("aQueue");
+		givenWeHaveCreatedQueues("aQueue");
 		whenAClientIsInited();
 		
 		// when
@@ -122,7 +122,7 @@ public class AsbClientTest extends AbstractAsbTest {
 	
 	@Test
 	public void verifyThatResponseMessageDeserialisedIntoResult() throws ServiceException, SecurityException, NoSuchMethodException {
-		givenWeHaveListOfQueues("aQueue");
+		givenWeHaveCreatedQueues("aQueue");
 		givenWeHaveQueueWith(reponseMessage());
 		whenAClientIsInited();
 		
@@ -136,7 +136,7 @@ public class AsbClientTest extends AbstractAsbTest {
 	
 	@Test
 	public void verifyThatAClientPullsResponseFromQueue() throws ServiceException, SecurityException, NoSuchMethodException {
-		givenWeHaveListOfQueues("aQueue");
+		givenWeHaveCreatedQueues("aQueue");
 		givenWeHaveQueueWith(emptyMessage(), reponseMessage());
 		whenAClientIsInited();
 		
@@ -150,7 +150,7 @@ public class AsbClientTest extends AbstractAsbTest {
 	
 	@Test
 	public void verifyThatResponseQueueIsCreatedBeforeStart() throws ServiceException {
-		givenWeHaveListOfQueues("aQueue");
+		givenWeHaveCreatedQueues("aQueue");
 		
 		whenAClientIsInited();
 		
@@ -159,7 +159,7 @@ public class AsbClientTest extends AbstractAsbTest {
 	
 	@Test
 	public void verifyThatRequestHasResponseQueueName() throws ServiceException, SecurityException, NoSuchMethodException {
-		givenWeHaveListOfQueues("aQueue");
+		givenWeHaveCreatedQueues("aQueue");
 		whenAClientIsInited();
 		
 		// when
@@ -170,7 +170,7 @@ public class AsbClientTest extends AbstractAsbTest {
 	
 	@Test
 	public void verifyThatRequestHasUniqueCorrelationId() throws ServiceException, SecurityException, NoSuchMethodException {
-		givenWeHaveListOfQueues("aQueue");
+		givenWeHaveCreatedQueues("aQueue");
 		whenAClientIsInited();
 		
 		// when
@@ -186,7 +186,7 @@ public class AsbClientTest extends AbstractAsbTest {
 
 	@Test
 	public void verifyThatResponseWithWrongCorrelationIdIsIgnored() throws ServiceException, SecurityException, NoSuchMethodException {
-		givenWeHaveListOfQueues("aQueue");
+		givenWeHaveCreatedQueues("aQueue");
 		givenWeHaveQueueWith(reponseMessageWithWrongCorrId(), reponseMessage());
 		whenAClientIsInited();
 		

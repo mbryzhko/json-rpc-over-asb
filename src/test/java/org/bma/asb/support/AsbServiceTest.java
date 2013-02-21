@@ -42,7 +42,7 @@ public class AsbServiceTest extends AbstractAsbTest {
 	public TestService testService;
 
 	@Mock
-	private ResponseQueueManager responseQueueManager;
+	private AsbResponseQueueManager responseQueueManager;
 
 	@Before
 	public void setUp() {
@@ -68,7 +68,7 @@ public class AsbServiceTest extends AbstractAsbTest {
 	@Test
 	public void verifyThatQueueIsCreatedWhenOptionIsSpecified()
 			throws ServiceException {
-		givenWeHaveListOfQueues("otherQueue");
+		givenWeHaveCreatedQueues("otherQueue");
 		givenEmptyQueue();
 		
 		whenStartService();
@@ -78,7 +78,7 @@ public class AsbServiceTest extends AbstractAsbTest {
 	
 	@Test
 	public void verifyThatServiceMethodIsInvoedWhenRequest() throws ServiceException {
-		givenWeHaveListOfQueues("aQueue");
+		givenWeHaveCreatedQueues("aQueue");
 		givenWeHaveMessageInQueue();
 		
 		whenStartService();
@@ -92,7 +92,7 @@ public class AsbServiceTest extends AbstractAsbTest {
 
 	@Test
 	public void verifyThatResultOfMethodInvokeIsSentInMessage() throws ServiceException, IOException {
-		givenWeHaveListOfQueues("aQueue");
+		givenWeHaveCreatedQueues("aQueue");
 		givenWeHaveMessageInQueue();
 		givenWeHaveResultOfServiceMethodInvoke();
 		
@@ -103,7 +103,7 @@ public class AsbServiceTest extends AbstractAsbTest {
 	
 	@Test
 	public void verifyThatResponseIsSentWithCorrelationId() throws ServiceException, IOException {
-		givenWeHaveListOfQueues("aQueue");
+		givenWeHaveCreatedQueues("aQueue");
 		givenWeHaveMessageInQueue();
 		givenWeHaveResultOfServiceMethodInvoke();
 		

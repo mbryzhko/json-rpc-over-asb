@@ -15,7 +15,7 @@ public class AsbService {
 	private final static Logger LOG = LoggerFactory.getLogger(AsbService.class);
 	
 	private JsonRpcRequestHandler requestHandler;
-	private ResponseQueueManager responseQueueManager;
+	private AsbResponseQueueManager responseQueueManager;
 	private AsbQueue queue;
 	private volatile boolean running = false;
 	/** Stop service after specified count of messages received. */
@@ -51,8 +51,7 @@ public class AsbService {
 				BrokeredMessage request = queue.receiveMessage();
 				processRequest(request);
 			} catch (AsbException e) {
-				// TODO: introduce correct error handling
-				LOG.error("Error in service: {} loop", queue.getPath());
+				LOG.error("Error in service: {} loop. {}", queue.getPath(), e);
 			} finally {
 				decStopAfter();
 			}
@@ -102,12 +101,12 @@ public class AsbService {
 		this.stopAfter = stopAfter;
 	}
 	
-	public ResponseQueueManager getResponseQueueManager() {
+	public AsbResponseQueueManager getResponseQueueManager() {
 		return responseQueueManager;
 	}
 	
 	@Required
-	public void setResponseQueueManager(ResponseQueueManager responseQueueManager) {
+	public void setResponseQueueManager(AsbResponseQueueManager responseQueueManager) {
 		this.responseQueueManager = responseQueueManager;
 	}
 	

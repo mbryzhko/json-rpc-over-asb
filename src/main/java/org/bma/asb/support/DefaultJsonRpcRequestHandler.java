@@ -35,7 +35,9 @@ public class DefaultJsonRpcRequestHandler implements JsonRpcRequestHandler {
 			LOG.debug("Handling request for service: {}", serviceIntefaceClass);
 			getJsonRpcService().handle(request, responce);
 		} catch (IOException e) {
-			throw new AsbException("Error processing request for service: " + serviceIntefaceClass, e);
+			throw new AsbException("IO error during processing request for service: " + serviceIntefaceClass, e);
+		} catch (RuntimeException e) {
+			throw new AsbException("Unexpected error during processing request for service: " + serviceIntefaceClass, e);
 		}
 	}
 

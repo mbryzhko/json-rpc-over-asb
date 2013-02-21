@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import com.microsoft.windowsazure.services.core.ServiceException;
 import com.microsoft.windowsazure.services.serviceBus.models.BrokeredMessage;
+import com.microsoft.windowsazure.services.serviceBus.models.GetQueueResult;
 import com.microsoft.windowsazure.services.serviceBus.models.ListQueuesResult;
 import com.microsoft.windowsazure.services.serviceBus.models.QueueInfo;
 import com.microsoft.windowsazure.services.serviceBus.models.ReceiveMessageOptions;
@@ -45,13 +46,14 @@ public class DefaultAsbQueue implements AsbQueue {
 		}
 	}
 	
-	public boolean isCreated() throws AsbException {
+	public boolean isCreatedOld() throws AsbException {
 		try {
 			LOG.debug("Checking if queue: {} exists", getPath());
 			ListQueuesResult listQueues = serviceManager.getService()
 					.listQueues();
 			for (QueueInfo q : listQueues.getItems()) {
-				if (q.getPath().equals(getPath())) {
+				LOG.debug("Asserting queue {} against {}", getPath(), q.getPath());
+				if (q.getPath().equalsIgnoreCase(getPath())) {
 					return true;
 				}
 			}
@@ -59,6 +61,20 @@ public class DefaultAsbQueue implements AsbQueue {
 			throw new AsbException("Error getting list of queues", e);
 		}
 		return false;
+	}
+	
+	public boolean isCreated() throws AsbException {
+		boolean result = false;
+		try {
+			LOG.debug("Checking if queue: {} exists", getPath());
+			GetQueueResult queue = serviceManager.getService().getQueue(getPath());
+			if (queue != null && queue.getValue() != null && queue.getValue().getPath().equals(getPath())) {
+				result = true;
+			} 
+		} catch (ServiceException e) {
+			LOG.error("Error checking queue {}, message {}", getPath(), e.getMessage());
+		}
+		return result;
 	}
 	
 	public void create() {

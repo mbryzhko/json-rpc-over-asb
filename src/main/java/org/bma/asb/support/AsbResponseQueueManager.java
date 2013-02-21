@@ -1,6 +1,6 @@
 package org.bma.asb.support;
 
-public interface ResponseQueueManager {
+public interface AsbResponseQueueManager {
 
 	AsbQueue getResponseQueue(String responseQueueName);
 
