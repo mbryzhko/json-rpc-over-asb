@@ -1,6 +1,5 @@
-package org.bma.asb.support;
+package org.bma.asb.support.queue;
 
-import org.bma.asb.support.queue.AsbQueue;
 
 public interface AsbResponseQueueManager {
 

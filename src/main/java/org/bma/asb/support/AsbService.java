@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.UUID;
 
 import org.bma.asb.support.queue.AsbQueue;
+import org.bma.asb.support.queue.AsbResponseQueueManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;

@@ -16,7 +16,7 @@
 		<property name="responseQueue" ref="ideaServiceResponseQueue" />
 	</bean>
 	
-	<bean id="ideaServiceResponseQueue" class="org.bma.asb.support.AsbResponseQueueFactory">
+	<bean id="ideaServiceResponseQueue" class="org.bma.asb.support.queue.AsbResponseQueueFactory">
 		<property name="responseQueueNaming" ref="ideaServiceResponseQueueNaming" />
 		<property name="serviceManager" ref="makeThingsServiceManager" />
 	</bean>
