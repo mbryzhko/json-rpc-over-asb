@@ -1,11 +1,9 @@
-package org.bma.asb.support;
+package org.bma.asb.support.queue;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 
-import org.bma.asb.support.queue.AsbQueue;
-import org.bma.asb.support.queue.AsbResponseQueueManager;
-import org.bma.asb.support.queue.DefaultAsbQueue;
+import org.bma.asb.support.AsbServiceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;

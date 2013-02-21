@@ -6,6 +6,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
 
 import org.bma.asb.support.queue.AsbQueue;
+import org.bma.asb.support.queue.DefaultAsbResponseQueueManager;
 import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Rule;

@@ -1,5 +1,6 @@
 package org.bma.asb.support;
 
+import org.bma.asb.support.queue.DefaultAsbResponseQueueManager;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
