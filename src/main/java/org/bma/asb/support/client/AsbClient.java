@@ -1,9 +1,12 @@
-package org.bma.asb.support;
+package org.bma.asb.support.client;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 
+import org.bma.asb.support.BrokeredMessageHelper;
+import org.bma.asb.support.CorrelationId;
+import org.bma.asb.support.DefaultCorrelationId;
 import org.bma.asb.support.queue.AsbQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -5,12 +5,12 @@
 
 	<import resource="classpath:spring/asb-service-context.xml" />
 
-	<bean id="ideaService" class="org.bma.asb.support.AsbRemoteServiceFactory">
+	<bean id="ideaService" class="org.bma.asb.support.client.AsbRemoteServiceFactory">
 		<property name="serviceClass" value="org.bma.asb.service.IdeaService" />
 		<property name="client" ref="ideaServiceQueueClient" />
 	</bean>
 
-	<bean id="ideaServiceQueueClient" class="org.bma.asb.support.AsbClient" init-method="init">
+	<bean id="ideaServiceQueueClient" class="org.bma.asb.support.client.AsbClient" init-method="init">
 		<property name="asbJsonRpc" ref="jsonRpc" />
 		<property name="queue" ref="ideaServiceQueue" />
 		<property name="responseQueue" ref="ideaServiceResponseQueue" />
@@ -29,6 +29,6 @@
 		<property name="serviceManager" ref="makeThingsServiceManager" />
 	</bean-->
 
-	<bean id="jsonRpc" class="org.bma.asb.support.DefaultAsbJsonRpcClient"></bean>
+	<bean id="jsonRpc" class="org.bma.asb.support.client.DefaultAsbJsonRpcClient"></bean>
 
 </beans>

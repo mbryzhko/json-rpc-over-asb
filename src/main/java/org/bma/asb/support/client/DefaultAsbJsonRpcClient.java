@@ -1,9 +1,11 @@
-package org.bma.asb.support;
+package org.bma.asb.support.client;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
+
+import org.bma.asb.support.AsbException;
 
 import com.googlecode.jsonrpc4j.JsonRpcClient;
 import com.googlecode.jsonrpc4j.ReflectionUtil;
