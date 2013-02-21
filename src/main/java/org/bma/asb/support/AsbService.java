@@ -74,7 +74,7 @@ public class AsbService {
 			
 			String responseQueueName = request.getReplyTo();
 			AsbQueue reponseQueue = responseQueueManager.getResponseQueue(responseQueueName);
-			LOG.debug("Sending response to queue: {} for session: {}", responseQueueName, response.getReplyToSessionId());
+			LOG.debug("Sending response to queue: {} with corr id: {}", responseQueueName, response.getCorrelationId());
 			reponseQueue.sendRequest(response);
 			
 		} else {

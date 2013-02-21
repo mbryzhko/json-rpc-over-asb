@@ -5,9 +5,14 @@
 
 	<import resource="classpath:spring/asb-service-context.xml" />
 
+	<bean id="ideaServiceAsbResponseQueueManager" class="org.bma.asb.support.DefaultAsbResponseQueueManager">
+		<property name="serviceManager" ref="makeThingsServiceManager"></property>
+	</bean>
+
 	<bean id="ideaServiceAsbService" class="org.bma.asb.support.AsbService">
 		<property name="queue" ref="ideaServiceQueue" />
 		<property name="requestHandler" ref="ideaServiceJsonRpcHandler" />
+		<property name="responseQueueManager" ref="ideaServiceAsbResponseQueueManager" />
 	</bean>
 
 	<bean id="ideaServiceJsonRpcHandler" class="org.bma.asb.support.DefaultJsonRpcRequestHandler">

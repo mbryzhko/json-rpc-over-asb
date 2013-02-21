@@ -5,6 +5,7 @@ import java.util.LinkedList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Required;
 
 public class DefaultAsbResponseQueueManager implements AsbResponseQueueManager {
 
@@ -39,6 +40,7 @@ public class DefaultAsbResponseQueueManager implements AsbResponseQueueManager {
 		return serviceManager;
 	}
 
+	@Required
 	public void setServiceManager(AsbServiceManager serviceManager) {
 		this.serviceManager = serviceManager;
 	}

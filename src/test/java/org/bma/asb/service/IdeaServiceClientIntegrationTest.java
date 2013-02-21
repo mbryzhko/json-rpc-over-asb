@@ -23,7 +23,7 @@ public class IdeaServiceClientIntegrationTest {
 	
 	@Test
 	public void verifyRequestIsSent() {
-		for (int i = 0; i < 1; i++) {
+		for (int i = 0; i < 100; i++) {
 			int ideaId = ideaService.createNewIdea("idea-" + i);
 			Assert.assertThat(ideaId > 0, CoreMatchers.is(true));
 		}

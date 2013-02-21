@@ -81,7 +81,7 @@ public class DefaultAsbQueue implements AsbQueue {
 		try {
 			LOG.info("Creating new queue {}", getPath());
 			QueueInfo info = new QueueInfo(getPath());
-			info.setRequiresSession(true);
+			//info.setRequiresSession(true);
 			info.setRequiresDuplicateDetection(true);
 			serviceManager.getService().createQueue(info);
 		} catch (ServiceException e) {
