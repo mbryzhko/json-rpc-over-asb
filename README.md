@@ -1,7 +1,7 @@
 json-rpc-over-asb
 =================
 
-This demostrate how to create remote service method call with using JSON-PRC protocol over Azure Service Bus.
+This demonstrate how to create remote service method call with using JSON-RPC protocol over Azure Service Bus.
 
 How to run:
 Service - IdeaServiceIntegrationTest.startService()<br/>
