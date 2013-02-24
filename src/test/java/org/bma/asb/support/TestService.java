@@ -4,4 +4,5 @@ import com.googlecode.jsonrpc4j.JsonRpcParam;
 
 public interface TestService {
 	int createNewIdea(@JsonRpcParam("name") String name);
+	void notification(@JsonRpcParam("action") String action);
 }

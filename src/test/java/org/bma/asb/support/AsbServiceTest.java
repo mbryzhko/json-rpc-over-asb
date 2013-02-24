@@ -117,13 +117,32 @@ public class AsbServiceTest extends AbstractAsbTest {
 		assertThat(message.getCorrelationId(), equalTo("CorrId"));
 	}
 	
+	@Test
+	public void verifyMethodInvokeWithVoidResult() throws ServiceException, IOException {
+		givenWeHaveCreatedQueues("aQueue");
+		givenWeHaveMessageInQueue("/notificationRequest.txt");
+		
+		whenStartService();
+		
+		thenNotificationMethodHasBeenInvoked();
+		thenResponseHasText("\"result\":null");
+	}
+	
+
+	private void thenNotificationMethodHasBeenInvoked() {
+		verify(testService).notification(eq("bar"));
+	}
 
 	private void thenResultIsSentInMessage() throws IOException, ServiceException {
+		thenResponseHasText("\"result\":100");
+	}
+	
+	public void thenResponseHasText(String text) throws ServiceException, IOException {
 		ArgumentCaptor<BrokeredMessage> bmc = ArgumentCaptor.forClass(BrokeredMessage.class);
 		verify(service).sendQueueMessage(Matchers.eq("aResponseQueue"), bmc.capture());
 		BrokeredMessage message = bmc.getValue();
 		System.out.println(message);
-		assertMessageBody(message, "\"result\":100");
+		assertMessageBody(message, text);
 	}
 
 	private void thenCreateIdeaMethodIsInvoked() {
@@ -131,8 +150,12 @@ public class AsbServiceTest extends AbstractAsbTest {
 	}
 
 	private void givenWeHaveMessageInQueue() throws ServiceException {
+		givenWeHaveMessageInQueue("/createIdeaRequest.txt");
+	}
+	
+	private void givenWeHaveMessageInQueue(String requestFilename) throws ServiceException {
 		InputStream requstIs = AsbServiceTest.class
-				.getResourceAsStream("/createIdeaRequest.txt");
+				.getResourceAsStream(requestFilename);
 		BrokeredMessage message = new BrokeredMessage(requstIs);
 		message.setMessageId("MsgId");
 		message.setReplyTo("aResponseQueue");

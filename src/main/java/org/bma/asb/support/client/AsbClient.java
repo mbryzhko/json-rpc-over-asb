@@ -48,7 +48,7 @@ public class AsbClient {
 		LOG.debug("Sending request to service for corr id: {}", corrId);
 		queue.sendRequest(jsonRpcMessage);
 		
-		Object result = Integer.valueOf(0);
+		Object result = null;
 		
 		BrokeredMessage message = pullResponseMessage(corrId);
 		if (message != null) {
