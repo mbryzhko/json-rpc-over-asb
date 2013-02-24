@@ -199,6 +199,19 @@ public class AsbClientTest extends AbstractAsbTest {
 		assertThat(Integer.class.cast(result), CoreMatchers.is(100));
 	}
 	
+	@Test
+	public void verifyThatVoidMethodInvocationIsNull() throws ServiceException, SecurityException, NoSuchMethodException {
+		givenWeHaveCreatedQueues("aQueue");
+		givenWeHaveQueueWith(responseMessageFromFile("/notificationResponse.txt"));
+		whenAClientIsInited();
+		
+		// when
+		Object result = client.invoke(TestService.class.getDeclaredMethod("notification", String.class), "bar");
+		
+		assertThat(result, CoreMatchers.nullValue());
+		
+	}
+	
 	private String thenRequestMessageHasCorrelationId() throws ServiceException {
 		BrokeredMessage message = expectedRequestMessage();
 		assertThat(message.getCorrelationId(), CoreMatchers.notNullValue());
@@ -220,7 +233,11 @@ public class AsbClientTest extends AbstractAsbTest {
 	}
 
 	private ReceiveQueueMessageResult reponseMessage() {
-		InputStream requstIs = this.getClass().getResourceAsStream("/createIdeaResponse.txt");
+		return responseMessageFromFile("/createIdeaResponse.txt");
+	}
+
+	private ReceiveQueueMessageResult responseMessageFromFile(String responseFilename) {
+		InputStream requstIs = this.getClass().getResourceAsStream(responseFilename);
 		BrokeredMessage message = new BrokeredMessage(requstIs);
 		message.setMessageId("MsgId");
 		correlationId.setNextCorrelationId("CorrId");
