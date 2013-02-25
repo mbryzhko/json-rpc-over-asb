@@ -1,0 +1,1 @@
+{"jsonrpc":"2.0","id":"-2062080725616611076","error":{"code":1,"message":"Error create notification","data":{"exceptionTypeName":"java.lang.RuntimeException","message":"Error create notification"}}}

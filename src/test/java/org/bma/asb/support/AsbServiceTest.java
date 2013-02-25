@@ -128,7 +128,37 @@ public class AsbServiceTest extends AbstractAsbTest {
 		thenResponseHasText("\"result\":null");
 	}
 	
+	@Test
+	public void verifyThatIfExeptionIsThrownThenErrorIsSent() throws ServiceException, IOException {
+		givenWeHaveCreatedQueues("aQueue");
+		givenWeHaveMessageInQueue();
+		whenMethodIsInvokedThenExeption();
+		
+		whenStartService();
+		
+		thenResponseHasText("\"error\":{\"code\":0,\"message\":\"something happened\",\"data\":{\"exceptionTypeName\":\"java.lang.RuntimeException\",\"message\":\"something happened\"");
+	}
+	
+	@Test
+	public void verifyThatIfMethodHasAnnotationAndExeptionIsThrownThenErrorIsSent() throws ServiceException, IOException {
+		givenWeHaveCreatedQueues("aQueue");
+		givenWeHaveMessageInQueue("/notificationRequest.txt");
+		whenMethod2IsInvokedThenExeption();
+		
+		whenStartService();
+		
+		thenResponseHasText("error\":{\"code\":1,\"message\":\"Error create notification\",\"data\":{\"exceptionTypeName\":\"java.lang.RuntimeException\",\"message\":\"Error create notification\"");
+	}
+	
 
+	private void whenMethodIsInvokedThenExeption() {
+		when(testService.createNewIdea(Matchers.anyString())).thenThrow(new RuntimeException("something happened"));
+	}
+
+	private void whenMethod2IsInvokedThenExeption() {
+		Mockito.doThrow(new RuntimeException("something happened")).when(testService).notification(Matchers.anyString());
+	}
+	
 	private void thenNotificationMethodHasBeenInvoked() {
 		verify(testService).notification(eq("bar"));
 	}
