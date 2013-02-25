@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 
+import org.bma.asb.support.AsbException;
 import org.bma.asb.support.BrokeredMessageHelper;
 import org.bma.asb.support.CorrelationId;
 import org.bma.asb.support.DefaultCorrelationId;
@@ -33,7 +34,7 @@ public class AsbClient {
 		
 	}
 	
-	public Object invoke(Method method, Object... args) {
+	public Object invoke(Method method, Object... args) throws AsbException, Throwable {
 		String corrId = correlationId.nextId();
 		LOG.debug("Preparing request for method: {} with corr id: {}", method.getName(), corrId);
 		

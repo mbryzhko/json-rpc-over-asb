@@ -119,6 +119,7 @@
 							<excludes>
 								<exclude>**/*IntegrationTest.java</exclude>
 							</excludes>
+							<redirectTestOutputToFile>true</redirectTestOutputToFile>
 						</configuration>
 					</execution>
 				</executions>

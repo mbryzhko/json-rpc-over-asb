@@ -26,7 +26,7 @@ public class AsbRemoteServiceFactoryTest {
 	private AsbRemoteServiceFactory<TestService> factory;
 	
 	@Test
-	public void verifyThatClientIsInvokedViaProxy() throws Exception {
+	public void verifyThatClientIsInvokedViaProxy() throws Throwable {
 		givenWeHaveAFactory();
 		givenResultOfInvocation(100);
 		
@@ -37,7 +37,7 @@ public class AsbRemoteServiceFactoryTest {
 	}
 	
 	@Test
-	public void verifyThatResultOfInvocationIsRetured() throws Exception {
+	public void verifyThatResultOfInvocationIsRetured() throws Throwable {
 		givenWeHaveAFactory();
 		givenResultOfInvocation(100);
 		
@@ -47,14 +47,14 @@ public class AsbRemoteServiceFactoryTest {
 		assertThat(result, is(100));
 	}
 
-	private void thenClientWasInvokedWithMethod(String methodName) {
+	private void thenClientWasInvokedWithMethod(String methodName) throws AsbException, Throwable {
 		ArgumentCaptor<Method> methodCapt = ArgumentCaptor.forClass(Method.class);
 		verify(client).invoke(methodCapt.capture(), any());
 		Method method = methodCapt.getValue();
 		assertThat(method.getName(), equalTo(methodName));
 	}
 
-	private void givenResultOfInvocation(Object result) {
+	private void givenResultOfInvocation(Object result) throws AsbException, Throwable {
 		when(client.invoke(isA(Method.class), any())).thenReturn(result);
 	}
 

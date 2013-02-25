@@ -17,6 +17,7 @@ public class DefaultAsbJsonRpcClient implements AsbJsonRpcClient {
 
 	public DefaultAsbJsonRpcClient() {
 		jsonRpcClient = new JsonRpcClient();
+		jsonRpcClient.setExceptionResolver(new AsbServiceExceptionResolver());
 	}
 
 	public void serialiseRequest(OutputStream outputStream, Method method,
@@ -30,9 +31,11 @@ public class DefaultAsbJsonRpcClient implements AsbJsonRpcClient {
 		}
 	}
 
-	public Object deserialiseReponse(InputStream responseIs, Class<?> methodReturnType) throws AsbException {
+	public Object deserialiseReponse(InputStream responseIs, Class<?> methodReturnType) throws Throwable {
 		try {
 			return jsonRpcClient.readResponse(methodReturnType, responseIs);
+		} catch (AsbServiceException e) {
+			throw e.getPayload();
 		} catch (Throwable e) {
 			throw new AsbException("Error read reponse", e);
 		}
