@@ -39,7 +39,7 @@ public class DefaultAsbQueue implements AsbQueue {
 		}
 	}
 	
-	public void sendRequest(BrokeredMessage message) {
+	public void sendMessage(BrokeredMessage message) {
 		try {
 			LOG.debug("Sending message {} to queue {}", message, getPath());
 			serviceManager.getService().sendQueueMessage(getPath(), message);

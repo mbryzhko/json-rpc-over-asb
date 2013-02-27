@@ -47,7 +47,7 @@ public class AsbClient {
 		jsonRpcMessage.setCorrelationId(corrId);
 		
 		LOG.debug("Sending request to service for corr id: {}", corrId);
-		queue.sendRequest(jsonRpcMessage);
+		queue.sendMessage(jsonRpcMessage);
 		
 		Object result = null;
 		

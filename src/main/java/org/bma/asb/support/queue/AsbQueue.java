@@ -10,7 +10,7 @@ public interface AsbQueue {
 
 	public abstract void assertCreated() throws AsbException;
 
-	public abstract void sendRequest(BrokeredMessage message);
+	public abstract void sendMessage(BrokeredMessage message);
 
 	public abstract boolean isCreated() throws AsbException;
 

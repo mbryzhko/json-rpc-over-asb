@@ -79,7 +79,7 @@ public class AsbService {
 			String responseQueueName = request.getReplyTo();
 			AsbQueue reponseQueue = responseQueueManager.getResponseQueue(responseQueueName);
 			LOG.debug("Sending response to queue: {} with corr id: {}", responseQueueName, response.getCorrelationId());
-			reponseQueue.sendRequest(response);
+			reponseQueue.sendMessage(response);
 			
 		} else {
 			LOG.trace("Reveived empty message from queue: {}", queue.getPath());
