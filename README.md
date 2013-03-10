@@ -5,5 +5,7 @@ This demonstrate how to create remote service method call with using JSON-RPC pr
 
 How to run:
 Service - IdeaServiceIntegrationTest.startService()<br/>
-Client - IdeaServiceClientIntegrationTest.verifyRequestIsSent();
+Client - IdeaServiceClientIntegrationTest.verifyRequestIsSent();  
+
+Perfornace test: MessagePerformaceTest.java
 
